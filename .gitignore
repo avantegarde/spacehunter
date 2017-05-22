@@ -1,5 +1,6 @@
 *.log
 .DS_Store
+.idea
 /.htaccess
 /license.txt
 /readme.html
