@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+    <title>Mr. Hunter</title>
+    <style>
+        *,
+        *:before,
+        *:after {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-kerning: auto;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+            background-color:#ffffff;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-size: 1.6em;
+            line-height: 1.4;
+            font-weight: 400;
+            font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            background-color:#ffffff;
+            color: #777777;
+        }
+        #game {
+            display: block;
+            width: 600px;
+            height: 100vh;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        #header {
+            display: block;
+            width: 100%;
+            height: 65px;
+            text-align: center;
+            margin: 0;
+            padding: 15px;
+            background: #444;
+            color: #ffffff;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            z-index: 999999;
+        }
+        #battleground {
+            display: block;
+            width: 100%;
+            height: calc(100% - 100px);
+            text-align: center;
+            margin: 0;
+            padding: 65px 15px 15px 15px;
+            background: #eaeaea;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+        #character {
+            display: block;
+            width: 100%;
+            height: 100px;
+            text-align: center;
+            margin: 0;
+            padding: 15px;
+            background: #444;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .clearfix:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+        #character .character-left,
+        #character .character-right {
+            display: block;
+            width: 50%;
+            margin: 0;
+            padding: 0 15px;
+            float: left;
+        }
+        #character #player {
+        }
+        .healthbar {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 20px;
+            background: darkred;
+        }
+        .healthbar .inner-health {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: green;
+        }
+        .healthbar .health-digit {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: #ffffff;
+            font-size: 12px;
+            line-height: 20px;
+            z-index: 999;
+        }
+        #character #weapon,
+        #character #potion {
+            display: block;
+            width: 50%;
+            height: 70px;
+            margin: 0;
+            padding: 0 15px;
+            float: left;
+        }
+        #character #weapon .inner,
+        #character #potion .inner {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            background: rgba(0,0,0,0.25);
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        #character #potion .inner {
+            line-height: 40px;
+        }
+        #character #weapon .inner img {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            margin: 0 auto;
+            vertical-align: middle;
+        }
+        @media screen and (max-width: 600px) {
+            #character .character-left {
+                width: 30%;
+            }
+            #character .character-right {
+                width: 70%;
+            }
+        }
+        @media screen and (max-width: 500px) {
+            #character {
+                height: 170px;
+            }
+            #battleground {
+                height: calc(100% - 170px);
+            }
+            #character #player {
+                display: block;
+                width: 25%;
+                float: left;
+            }
+            #character #health {
+                display: block;
+                width: 75%;
+                float: left;
+                margin-top: 7px;
+            }
+            #character .character-left,
+            #character .character-right {
+                width: 100%;
+                float: none;
+                clear: both;
+                padding: 0 0 15px 0;
+            }
+            #character #weapon {
+                padding: 0 15px 0 0;
+            }
+            #character #potion {
+                padding: 0 0 0 15px;
+            }
+        }
+        /*--- Monster ---*/
+        .monster {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            background: #000;
+        }
+        .monster:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+        .monster-img {
+            display: block;
+            width: 64px;
+            height: 64px;
+            float: left;
+            margin-top: 10px;
+            background-image:url(img/monsters.png);
+            background-repeat: no-repeat;
+            background-position: -2px -2px;
+            overflow: hidden;
+        }
+        .monster .monster-details {
+            display: block;
+            width: calc(100% - 75px);
+            float: right;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="game" class="clearfix">
+    <!-- Header -->
+    <div id="header" class="clearfix">
+        <span id="level">Lvl: <span></span></span>
+        <span id="xp">XP: <span></span></span>
+        <!-- <span id="units">units: 0</span> -->
+    </div>
+    <!-- Battleground -->
+    <div id="battleground" class="clearfix"></div>
+    <!-- Character -->
+    <div id="character" class="clearfix">
+        <div class="character-left clearfix">
+            <div id="player">
+                😊
+            </div>
+            <div id="health">
+                <div class="healthbar">
+                    <span class="health-digit"><span>100</span> ❤️</span>
+                    <div class="inner-health"></div>
+                </div>
+            </div>
+        </div>
+        <div class="character-right clearfix">
+            <div id="weapon" class="player-attack">
+                <span class="inner">
+                    <img src="img/Sword22.png">
+                </span>
+            </div>
+            <div id="potion" class="player-potion">
+                <span class="inner">
+                    🍕
+                </span>
+            </div>
+        </div>
+    </div>
+</div><!-- #game -->
+
+<!-- Start JS -->
+<script>
+$(document).ready(function() {
+    /**
+     * Global Variables
+     */
+    var SAVE_KEY = 'game_save';
+    var state = load();
+    if (state) {
+        state = state;
+    } else {
+        var state = {
+            player: {
+                lvl: 1,
+                xp: 0,
+                units: 10,
+                health: 1000,
+                maxHealth: 1000,
+                weapon: {
+                    name: 'pistol',
+                    dmg: 25
+                }
+            },
+            level: 'stage1'
+        }
+        save(state);
+    }
+    console.log(state);
+    var monsters = buildMonsters(state.player);
+    /**
+     * Initial Load / Save
+     */
+    renderMonsters(monsters);
+    updatePlayer(state.player);
+    /**
+     * Save state
+     * @param state
+     */
+    function save(state) {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    }
+    /**
+     * Load state
+     */
+    function load() {
+        return JSON.parse(localStorage.getItem(SAVE_KEY));
+    }
+    /**
+     * Game Reset
+     */
+    function gameReset() {
+        var state = '';
+        save(state);
+    }
+    /**
+     * Attack
+     */
+    function attack(player, monster){
+        var playerHealth = player.health;
+        var playerDMG = player.weapon.dmg;
+        var monsterHealth = monster.health;
+        var monsterDMG = monster.dmg;
+
+        monster.health = monsterHealth - playerDMG;
+        if (monster.health < 1) {
+            grantXP(player, 125);
+            destroyMonster(monster);
+        } else {
+            updateMonster(monster);
+        }
+        player.health = playerHealth - monsterDMG;
+        if (player.health < 1) {
+            destroyPlayer(player);
+        } else {
+            updatePlayer(player);
+        }
+    }
+    /**
+     * Get Monster
+     * @param monsterID
+     */
+    function getMonster(monsterID){
+        for(i=0;i<monsters.length;i++){
+            if(monsters[i].name === monsterID){
+                return monsters[i];
+            }
+        }
+    }
+    /**
+     * Update Monster
+     * @param monster
+     */
+    function updateMonster(monster){
+        console.log('updateMonster(monster)');
+        // Update Healthbar
+        var healthbar = $('.monster[data-monster="'+ monster.name +'"]').find('.healthbar');
+        healthbar.find('.health-digit > span').html(monster.health);
+        var newHealth = Math.floor( (monster.health / monster.maxHealth) * 100);
+        healthbar.find('.inner-health').width(newHealth + '%');
+    }
+    /**
+     * Destroy Monster
+     * @param monster
+     */
+    function destroyMonster(monster){
+        console.log('destroyMonster(monster)');
+        $('.monster[data-monster="'+ monster.name +'"]').remove();
+
+        var monsterCount = $('#battleground').find('.monster').length;
+        if(monsterCount <= 0) {
+            levelComplete();
+        }
+    }
+    /**
+     * Update Player
+     * @param player
+     */
+    function updatePlayer(player){
+        console.log('updatePlayer(player)');
+        // Update Header Info
+        var lvl = $('#header #level > span');
+        var xp = $('#header #xp > span');
+        lvl.html(player.lvl);
+        xp.html(player.xp);
+        // Update Healthbar
+        var healthbar = $('#character .healthbar');
+        healthbar.find('.health-digit > span').html(player.health);
+        var newHealth = Math.floor( (player.health / player.maxHealth) * 100);
+        healthbar.find('.inner-health').width(newHealth + '%');
+    }
+    /**
+     * Update Player
+     * @param int
+     */
+    function grantXP(player, xp){
+        console.log('grantXP(player, int)');
+        player.xp = player.xp + xp;
+        if (player.xp >= 1000) {
+            var lvlInc = Math.floor(player.xp / 1000);
+            player.lvl = player.lvl + lvlInc;
+            player.xp = player.xp - (lvlInc * 1000);
+        }
+    }
+    /**
+     * Destroy Player
+     * @param player
+     */
+    function destroyPlayer(player){
+        console.log('destroyPlayer(player)');
+        alert('You Died! 😢');
+        gameReset();
+        location.reload();
+    }
+    /**
+     * Level Complete
+     * @param monsterID
+     */
+    function levelComplete(){
+        alert('Level Complete!');
+        save(state);
+        location.reload();
+    }
+    /**
+     * Build Monsters
+     * @param monsters
+     */
+    function buildMonsters(player){
+        console.log('buildMonsters()');
+        var monsters = [];
+        var monster_number = randomIntFromInterval(1,10);
+        var monster_lvl = player.lvl;
+        for(i=0;i<monster_number;i++){
+            var monster_health = randomIntFromInterval(100,200);
+            var monster_dmg = randomIntFromInterval(10,50);
+            var sprite_x = 64*Math.floor(Math.random()*16);
+            var sprite_y = 64*Math.floor(Math.random()*16);
+            var monster = {
+                lvl: monster_lvl,
+                dmg: monster_dmg,
+                health: monster_health,
+                maxHealth: monster_health,
+                name: 'monster-' + i,
+                id: monster_number[i],
+                imgX: sprite_x,
+                imgY: sprite_y
+            };
+            monsters.push(monster);
+        }
+        return monsters;
+    }
+    /**
+     * Random number between 2 integers
+     * @param int, int
+     */
+    function randomIntFromInterval(min,max) {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+    /**
+     * Render the monsters in the battlefield
+     * @param monsters
+     */
+    function renderMonsters(monsters){
+        console.log('renderMonsters()');
+        // Update Healthbar
+        var battleground = $('#battleground');
+        var frag = [];
+        if(battleground) {
+            battleground.empty();
+            for (var i = monsters.length - 1; i >= 0; --i) {
+                frag.push('' +
+                    '<div class="monster" data-monster="' + monsters[i].name + '">' +
+                    '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
+                    '   <div class="monster-details">' +
+                    '      <span class="level">Lvl: ' + monsters[i].lvl + '</span>' +
+                    '      <span class="name">' + monsters[i].name + '</span>' +
+                    '      <div class="healthbar">' +
+                    '          <span class="health-digit"><span>' + monsters[i].maxHealth + '</span> ❤️</span>' +
+                    '           <div class="inner-health"></div>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '</div>');
+            }
+            battleground.append(frag.join(''));
+            //battleground[0].scrollTop = battleground[0].scrollHeight;
+            battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
+        }
+    }
+
+    /**
+     * Actions / Buttons
+     */
+    $('.player-attack').click(function(){
+        var player = state.player;
+        var monsterID = $('#battleground > .monster:last-of-type').data('monster');
+        var monster = getMonster(monsterID);
+        console.log(monster);
+        attack(player, monster);
+        console.log('player health = ' + player.health);
+        console.log('monster health = ' + monster.health);
+        console.log('player health = ' + player.maxHealth);
+        console.log('monster health = ' + monster.maxHealth);
+        console.log(player);
+    });
+    $('.player-potion').click(function(){
+        var player = state.player;
+        player.health = player.health+100;
+        if(player.health > player.maxHealth){
+            player.health = player.maxHealth;
+        }
+        updatePlayer(player);
+        console.log('player health = ' + player.health);
+    });
+
+
+
+}); // document.ready
+</script>
+</body>
+</html>

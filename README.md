@@ -1,2 +1,2 @@
 # mr-hunter
-Random game idea
+Random js game for fun.
