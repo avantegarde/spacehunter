@@ -65,6 +65,11 @@
             top: 0;
             z-index: 999999;
         }
+        #game-reset {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
         #battleground {
             display: block;
             width: 100%;
@@ -194,10 +199,10 @@
                 padding: 0 0 15px 0;
             }
             #character #weapon {
-                padding: 0 15px 0 0;
+                padding: 0 0 0 15px;
             }
             #character #potion {
-                padding: 0 0 0 15px;
+                padding: 0 15px 0 0;
             }
         }
         /*--- Monster ---*/
@@ -239,6 +244,7 @@
         <span id="level">Lvl: <span></span></span>
         <span id="xp">XP: <span></span></span>
         <!-- <span id="units">units: 0</span> -->
+        <span id="game-reset">🗑️</span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
@@ -297,7 +303,7 @@ $(document).ready(function() {
      */
     var SAVE_KEY = 'game_save';
     var state = load();
-    if (state) {
+    if (state && state.monsters) {
         state = state;
     } else {
         var state = {
@@ -346,6 +352,7 @@ $(document).ready(function() {
     function gameReset() {
         var state = '';
         save(state);
+        location.reload();
     }
     /**
      * Attack
@@ -544,7 +551,8 @@ $(document).ready(function() {
         console.log('monster health = ' + monster.maxHealth);
         console.log(player);*/
     });
-    $('.player-potion').click(function(){
+    $(document).on('click', '.player-potion', function() {
+    //$('.player-potion').click(function(){
         var player = state.player;
         player.health = player.health+100;
         if(player.health > player.maxHealth){
@@ -552,6 +560,9 @@ $(document).ready(function() {
         }
         updatePlayer(player);
         console.log('player health = ' + player.health);
+    });
+    $(document).on('click', '#game-reset', function() {
+        gameReset();
     });
 
 
