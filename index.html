@@ -256,14 +256,14 @@
             </div>
         </div>
         <div class="character-right clearfix">
-            <div id="weapon" class="player-attack">
-                <span class="inner">
-                    <img src="img/Sword22.png">
-                </span>
-            </div>
             <div id="potion" class="player-potion">
                 <span class="inner">
                     🍕
+                </span>
+            </div>
+            <div id="weapon" class="player-attack">
+                <span class="inner">
+                    <img src="img/Sword22.png">
                 </span>
             </div>
         </div>
@@ -273,6 +273,25 @@
 <!-- Start JS -->
 <script>
 $(document).ready(function() {
+    /**
+     * Random number between 2 integers
+     * @param int, int
+     */
+    function randomIntFromInterval(min,max) {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+    /**
+     * Random Elemental Choice
+     */
+    function randomElemental() {
+        var elements = [
+            'water',
+            'fire',
+            'earth'
+        ];
+        var element = elements[Math.floor(Math.random() * elements.length)];
+        return element;
+    }
     /**
      * Global Variables
      */
@@ -289,20 +308,24 @@ $(document).ready(function() {
                 health: 1000,
                 maxHealth: 1000,
                 weapon: {
-                    name: 'pistol',
-                    dmg: 25
+                    id: '001',
+                    name: 'sword',
+                    dmg: 25,
+                    crit: 25 * 2,
+                    special: 25 + (25 / 2)
                 }
             },
             level: 'stage1'
-        }
+        };
+        state.monsters = buildMonsters(state.player);
         save(state);
     }
     console.log(state);
-    var monsters = buildMonsters(state.player);
+    //var monsters = state.monsters;
     /**
      * Initial Load / Save
      */
-    renderMonsters(monsters);
+    renderMonsters(state.monsters);
     updatePlayer(state.player);
     /**
      * Save state
@@ -352,9 +375,9 @@ $(document).ready(function() {
      * @param monsterID
      */
     function getMonster(monsterID){
-        for(i=0;i<monsters.length;i++){
-            if(monsters[i].name === monsterID){
-                return monsters[i];
+        for(i=0;i<state.monsters.length;i++){
+            if(state.monsters[i].name === monsterID){
+                return state.monsters[i];
             }
         }
     }
@@ -420,8 +443,16 @@ $(document).ready(function() {
     function destroyPlayer(player){
         console.log('destroyPlayer(player)');
         alert('You Died! 😢');
-        gameReset();
-        location.reload();
+        //gameReset();
+        var player_lvl = (player.lvl>0)?(player.lvl-1):0;
+        state.player.lvl = player_lvl;
+        state.player.xp = 0;
+        state.player.health = state.player.maxHealth;
+        state.level = 'stage1';
+        state.monsters = buildMonsters(state.player);
+        renderMonsters(state.monsters);
+        updatePlayer(state.player);
+        save(state);
     }
     /**
      * Level Complete
@@ -430,7 +461,9 @@ $(document).ready(function() {
     function levelComplete(){
         alert('Level Complete!');
         save(state);
-        location.reload();
+        state.monsters = buildMonsters(state.player);
+        renderMonsters(state.monsters);
+        updatePlayer(state.player);
     }
     /**
      * Build Monsters
@@ -448,7 +481,10 @@ $(document).ready(function() {
             var sprite_y = 64*Math.floor(Math.random()*16);
             var monster = {
                 lvl: monster_lvl,
+                el: randomElemental(),
                 dmg: monster_dmg,
+                crit: monster_dmg * 2,
+                special: monster_dmg + (monster_dmg / 2),
                 health: monster_health,
                 maxHealth: monster_health,
                 name: 'monster-' + i,
@@ -458,14 +494,8 @@ $(document).ready(function() {
             };
             monsters.push(monster);
         }
+        //console.log(monsters)
         return monsters;
-    }
-    /**
-     * Random number between 2 integers
-     * @param int, int
-     */
-    function randomIntFromInterval(min,max) {
-        return Math.floor(Math.random()*(max-min+1)+min);
     }
     /**
      * Render the monsters in the battlefield
@@ -497,21 +527,22 @@ $(document).ready(function() {
             battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         }
     }
-
     /**
      * Actions / Buttons
      */
-    $('.player-attack').click(function(){
+    $(document).on('click', '.player-attack', function() {
+    //$('.player-attack').click(function(){
+        console.log(state.monsters);
         var player = state.player;
         var monsterID = $('#battleground > .monster:last-of-type').data('monster');
         var monster = getMonster(monsterID);
-        console.log(monster);
+        //console.log(monster);
         attack(player, monster);
-        console.log('player health = ' + player.health);
+        /*console.log('player health = ' + player.health);
         console.log('monster health = ' + monster.health);
         console.log('player health = ' + player.maxHealth);
         console.log('monster health = ' + monster.maxHealth);
-        console.log(player);
+        console.log(player);*/
     });
     $('.player-potion').click(function(){
         var player = state.player;
