@@ -211,6 +211,8 @@
             width: 100%;
             margin: 10px 0;
             padding: 15px;
+            border: 4px solid transparent;
+            border-radius: 100px;
             background: #000;
         }
         .monster:after {
@@ -229,10 +231,34 @@
             background-position: -2px -2px;
             overflow: hidden;
         }
+        .monster[data-element="fire"] {
+            border-color: #DA2F18;
+        }
+        .monster[data-element="water"] {
+            border-color: #1C50BE;
+        }
+        .monster[data-element="earth"] {
+            border-color: #2CAF34;
+        }
+        .monster[data-element="electric"] {
+            border-color: #F8CB05;
+        }
         .monster .monster-details {
             display: block;
             width: calc(100% - 75px);
             float: right;
+            font-size: 20px;
+            line-height: 20px;
+        }
+        .monster .monster-details .healthbar {
+            margin-top: 5px;
+        }
+        .monster .stats {
+            display: block;
+            margin: 0;
+            padding: 10px 0 0 0;
+            font-size: 14px;
+            line-height: 16px;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -297,6 +323,21 @@ $(document).ready(function() {
         ];
         var element = elements[Math.floor(Math.random() * elements.length)];
         return element;
+    }
+    /**
+     * Random Monster Name
+     */
+    function randomMonsterName() {
+        var adjectives = ["little", "sea", "huge", "strange", "double", "prehistoric", "human", "marine", "hideous", "fabulous", "mythical", "terrible", "horrible", "moral", "headed", "eyed", "grotesque", "evil", "inhuman", "hopeful", "ugly", "winged", "fantastic", "giant", "mechanical", "imaginary", "like", "female", "savage", "frightful", "big", "mythological", "gigantic", "cruel", "antediluvian", "extinct", "ferocious", "eating", "green", "horrid", "supernatural", "fierce", "hairy", "maligned", "dangerous", "famous", "unnatural", "scary", "uncouth", "shapeless", "dreadful", "fearful", "headless", "cold", "baggy", "alien", "mighty", "bloodthirsty", "aquatic", "fearsome", "legendary", "unknown", "primeval", "sacred", "scaly", "hungry", "enormous", "loose", "unwieldy", "grim", "voracious", "fabled", "weird", "hybrid", "dead"];
+        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "hot air balloon", "praying mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "auto mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "mechanic", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
+        return randomName(adjectives) + ' ' + randomName(nouns);
+    }
+    /**
+     * Random Name Picker
+     */
+    function randomName(list) {
+        var i = Math.floor(Math.random() * list.length);
+        return list[i];
     }
     /**
      * Global Variables
@@ -367,10 +408,14 @@ $(document).ready(function() {
         if (monster.health < 1) {
             grantXP(player, 125);
             destroyMonster(monster);
+            var monsterCount = $('#battleground').find('.monster').length;
+            if(monsterCount <= 0) {
+                levelComplete();
+            }
         } else {
             updateMonster(monster);
+            player.health = playerHealth - monsterDMG;
         }
-        player.health = playerHealth - monsterDMG;
         if (player.health < 1) {
             destroyPlayer(player);
         } else {
@@ -407,11 +452,6 @@ $(document).ready(function() {
     function destroyMonster(monster){
         console.log('destroyMonster(monster)');
         $('.monster[data-monster="'+ monster.name +'"]').remove();
-
-        var monsterCount = $('#battleground').find('.monster').length;
-        if(monsterCount <= 0) {
-            levelComplete();
-        }
     }
     /**
      * Update Player
@@ -451,7 +491,7 @@ $(document).ready(function() {
         console.log('destroyPlayer(player)');
         alert('You Died! 😢');
         //gameReset();
-        var player_lvl = (player.lvl>0)?(player.lvl-1):0;
+        var player_lvl = (player.lvl>1)?(player.lvl-1):1;
         state.player.lvl = player_lvl;
         state.player.xp = 0;
         state.player.health = state.player.maxHealth;
@@ -467,10 +507,11 @@ $(document).ready(function() {
      */
     function levelComplete(){
         alert('Level Complete!');
-        save(state);
         state.monsters = buildMonsters(state.player);
         renderMonsters(state.monsters);
+        state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
+        save(state);
     }
     /**
      * Build Monsters
@@ -484,6 +525,7 @@ $(document).ready(function() {
         for(i=0;i<monster_number;i++){
             var monster_health = randomIntFromInterval(100,200);
             var monster_dmg = randomIntFromInterval(10,50);
+            var monster_armor = 10*Math.floor(Math.random()*11);
             var sprite_x = 64*Math.floor(Math.random()*16);
             var sprite_y = 64*Math.floor(Math.random()*16);
             var monster = {
@@ -491,10 +533,10 @@ $(document).ready(function() {
                 el: randomElemental(),
                 dmg: monster_dmg,
                 crit: monster_dmg * 2,
-                special: monster_dmg + (monster_dmg / 2),
+                armor: monster_armor,
                 health: monster_health,
                 maxHealth: monster_health,
-                name: 'monster-' + i,
+                name: randomMonsterName(),
                 id: monster_number[i],
                 imgX: sprite_x,
                 imgY: sprite_y
@@ -517,7 +559,7 @@ $(document).ready(function() {
             battleground.empty();
             for (var i = monsters.length - 1; i >= 0; --i) {
                 frag.push('' +
-                    '<div class="monster" data-monster="' + monsters[i].name + '">' +
+                    '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
                     '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
                     '   <div class="monster-details">' +
                     '      <span class="level">Lvl: ' + monsters[i].lvl + '</span>' +
@@ -525,6 +567,11 @@ $(document).ready(function() {
                     '      <div class="healthbar">' +
                     '          <span class="health-digit"><span>' + monsters[i].maxHealth + '</span> ❤️</span>' +
                     '           <div class="inner-health"></div>' +
+                    '       </div>' +
+                    '      <div class="stats">' +
+                    '          <span class="elemental">el: <span>' + monsters[i].el + '</span>️</span> | ' +
+                    '          <span class="dmg">dmg: <span>' + monsters[i].dmg + '</span>️</span> | ' +
+                    '          <span class="armor">armor: <span>' + monsters[i].armor + '</span>️</span>' +
                     '       </div>' +
                     '   </div>' +
                     '</div>');
