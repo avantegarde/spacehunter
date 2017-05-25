@@ -52,7 +52,7 @@ $(document).ready(function() {
      */
     function randomMonsterName() {
         var adjectives = ["little", "sea", "huge", "strange", "double", "prehistoric", "human", "marine", "hideous", "fabulous", "mythical", "terrible", "horrible", "moral", "headed", "eyed", "grotesque", "evil", "inhuman", "hopeful", "ugly", "winged", "fantastic", "giant", "mechanical", "imaginary", "like", "female", "savage", "frightful", "big", "mythological", "gigantic", "cruel", "antediluvian", "extinct", "ferocious", "eating", "green", "horrid", "supernatural", "fierce", "hairy", "maligned", "dangerous", "famous", "unnatural", "scary", "uncouth", "shapeless", "dreadful", "fearful", "headless", "cold", "baggy", "alien", "mighty", "bloodthirsty", "aquatic", "fearsome", "legendary", "unknown", "primeval", "sacred", "scaly", "hungry", "enormous", "loose", "unwieldy", "grim", "voracious", "fabled", "weird", "hybrid", "dead"];
-        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "hot air balloon", "praying mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "auto mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "mechanic", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
+        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "balloon", "mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
         return randomName(adjectives) + ' ' + randomName(nouns);
     }
     /**
@@ -81,25 +81,29 @@ $(document).ready(function() {
                     id: '001',
                     name: 'sword',
                     dmg: 25,
+                    el: 'water',
                     crit: 25 * 2,
-                    special: 25 + (25 / 2)
+                    special: 25 + (25 / 2),
+                    imgURL: 'img/Sword1.png'
                 }
             },
             inventory:[{
                 id: '001',
                 name: 'sword',
                 dmg: 25,
+                el: 'water',
                 crit: 25 * 2,
                 special: 25 + (25 / 2),
-                imgURL: 'img/Sword22.png'
+                imgURL: 'img/Sword1.png'
             },
             {
                 id: '002',
                 name: 'sword2',
-                dmg: 100,
+                dmg: 50,
+                el: 'earth',
                 crit: 100 * 2,
                 special: 100 + (100 / 2),
-                imgURL: 'img/Sword21.png'
+                imgURL: 'img/Sword2.png'
             }],
             level: 'stage1'
         };
@@ -251,17 +255,33 @@ $(document).ready(function() {
         var weaponHolder = $('#character #weapon .weapon-holder');
         weaponHolder.empty();
         weaponHolder.html('<img src="'+ player.weapon.imgURL +'">');
+        // Close Inventory
+        var inventory = $('#inventory');
+        if(inventory.hasClass('active')){
+            inventory.removeClass('active');
+        } else {
+            inventory.addClass('active');
+        }
     }
     /**
      * Level Complete
      * @param monsterID
      */
     function levelComplete(){
-        alert('Level Complete!');
+        alert('Level Complete! You found a new weapon! Check your inventory.');
         state.monsters = buildMonsters(state.player);
         renderMonsters(state.monsters);
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
+        //generate weapon
+        var weapon = generateWeapon(state.player);
+        if(state.inventory.length > 60) {
+            alert('You have too many items. please remove some before completing the next level.');
+        } else {
+            state.inventory.push(weapon);
+        }
+        renderInventory(state.inventory);
+        //save
         save(state);
     }
     /**
@@ -290,7 +310,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div id="weapon" class="open-inventory">' +
                 '   <span class="weapon-holder inner">' +
-                '       <img src="img/Sword.png">' +
+                '       <img src="'+ player.weapon.imgURL +'">' +
                 '   </span>' +
                 '</div>');
             character.append(frag.join(''));
@@ -367,7 +387,7 @@ $(document).ready(function() {
     }
     /**
      * Render the inventory with items owned
-     * @param player.inventory
+     * @param inventory
      */
     function renderInventory(inventory){
         console.log('renderInventory()');
@@ -387,6 +407,27 @@ $(document).ready(function() {
             frag.push('</div>');
             holder.append(frag.join(''));
         }
+    }
+    /**
+     * Generate Weapon
+     * @param player
+     */
+    function generateWeapon(player){
+        console.log('generateWeapon()');
+        var weapon_number = state.inventory.length + 1;
+        var weaponID = 'w' + weapon_number.toString();
+        var weapon_dmg = randomIntFromInterval(player.lvl+25,player.lvl+50);
+        var weapon_img = 'img/Sword'+ randomIntFromInterval(1,23) +'.png';
+        var weapon = {
+            id: weaponID,
+            name: randomMonsterName(),
+            dmg: weapon_dmg,
+            el: randomElemental(),
+            crit: weapon_dmg * 2,
+            special: weapon_dmg + (weapon_dmg / 2),
+            imgURL: weapon_img
+        };
+        return weapon;
     }
     /**
      * Get Weapon

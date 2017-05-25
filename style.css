@@ -300,12 +300,15 @@ body {
     display: block;
     width: 100%;
     height: auto;
+    max-height: calc(100% - 165px);
+    overflow-x: hidden;
+    overflow-y: scroll;
     margin: 0;
     padding: 15px;
     position: absolute;
     top: -100%;
     background: #cccccc;
-    z-index: 999999;
+    z-index: 99999;
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
 }
@@ -352,4 +355,9 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+@media screen and (max-width: 500px) {
+    #inventory {
+        max-height: calc(100% - 235px);
+    }
 }
