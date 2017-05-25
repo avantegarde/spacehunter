@@ -1,0 +1,355 @@
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-kerning: auto;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+html {
+    -webkit-text-size-adjust: 100%;
+    background-color:#ffffff;
+    height: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    font-size: 1.6em;
+    line-height: 1.4;
+    font-weight: 400;
+    font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    background-color:#ffffff;
+    color: #777777;
+    height: 100%;
+}
+#game {
+    display: block;
+    width: 600px;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: hidden;
+}
+#header {
+    display: block;
+    width: 100%;
+    height: 65px;
+    text-align: center;
+    margin: 0;
+    padding: 15px;
+    background: #444;
+    color: #ffffff;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 999999;
+}
+#game-reset {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+#battleground {
+    display: block;
+    width: 100%;
+    height: calc(100% - 100px);
+    text-align: center;
+    margin: 0;
+    padding: 65px 15px 15px 15px;
+    background: #eaeaea;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+#character {
+    display: block;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    margin: 0;
+    padding: 15px;
+    background: #444;
+    color: #ffffff;
+    overflow: hidden;
+}
+.clearfix:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+#character .character-left,
+#character .character-right {
+    display: block;
+    width: 50%;
+    margin: 0;
+    padding: 0 15px;
+    float: left;
+}
+#character #player {
+}
+.healthbar {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 20px;
+    background: darkred;
+}
+.healthbar .inner-health {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: green;
+}
+.healthbar .health-digit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 20px;
+    z-index: 999;
+}
+#character #weapon,
+#character #potion {
+    display: block;
+    width: 50%;
+    height: 70px;
+    margin: 0;
+    padding: 0 15px;
+    float: left;
+}
+#character #weapon .inner,
+#character #potion .inner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 15px;
+    background: rgba(0,0,0,0.25);
+    cursor: pointer;
+    vertical-align: middle;
+}
+#character #potion .inner {
+    line-height: 40px;
+}
+#character #weapon .inner img {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    vertical-align: middle;
+}
+@media screen and (max-width: 600px) {
+    #character .character-left {
+        width: 30%;
+    }
+    #character .character-right {
+        width: 70%;
+    }
+}
+@media screen and (max-width: 500px) {
+    #character {
+        height: 170px;
+    }
+    #battleground {
+        height: calc(100% - 170px);
+    }
+    #character #player {
+        display: block;
+        width: 25%;
+        float: left;
+    }
+    #character #health {
+        display: block;
+        width: 75%;
+        float: left;
+        margin-top: 7px;
+    }
+    #character .character-left,
+    #character .character-right {
+        width: 100%;
+        float: none;
+        clear: both;
+        padding: 0 0 15px 0;
+    }
+    #character #weapon {
+        padding: 0 0 0 15px;
+    }
+    #character #potion {
+        padding: 0 15px 0 0;
+    }
+}
+/*--- Monster ---*/
+.monster {
+    display: block;
+    position: relative;
+    width: 100%;
+    margin: 10px 0;
+    padding: 15px;
+    border: 4px solid transparent;
+    text-align: left;
+    border-radius: 100px;
+    background: #000;
+    overflow: hidden;
+}
+.monster:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.monster-img {
+    display: block;
+    width: 64px;
+    height: 64px;
+    float: left;
+    margin-top: 10px;
+    background-image:url(img/monsters.png);
+    background-repeat: no-repeat;
+    background-position: -2px -2px;
+    overflow: hidden;
+}
+.monster[data-element="fire"] {
+    border-color: #DA2F18;
+}
+.monster[data-element="water"] {
+    border-color: #1C50BE;
+}
+.monster[data-element="earth"] {
+    border-color: #2CAF34;
+}
+.monster[data-element="electric"] {
+    border-color: #F8CB05;
+}
+.monster .monster-details {
+    display: block;
+    width: calc(100% - 125px);
+    padding: 0 15px;
+    float: left;
+    font-size: 20px;
+    line-height: 20px;
+}
+.monster .monster-details .name {
+    font-size: 18px;
+    line-height: 18px;
+}
+.monster .monster-details .healthbar {
+    margin-top: 5px;
+    text-align: center;
+}
+.monster .stats {
+    display: block;
+    margin: 0;
+    padding: 10px 0 0 0;
+    font-size: 14px;
+    line-height: 16px;
+}
+.monster .stats > span {
+    display: block;
+    width: 50%;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+.monster button.attack-monster {
+    display: block;
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    padding: 0;
+    float: left;
+    background: none;
+    border: none;
+    outline: none !important;
+}
+.monster button.attack-monster i {
+    display: block;
+    width: 60px;
+    height: 60px;
+    margin: 14px 0 0 0;
+    padding: 0;
+    font-size: 60px;
+    line-height: 64px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: transparent;
+    color: #DA2F18;
+}
+/*--- Inventory ---*/
+#inventory {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 15px;
+    position: absolute;
+    top: -100%;
+    background: #cccccc;
+    z-index: 999999;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+#inventory.active {
+    top: 65px;
+}
+#inventory .item-viewer {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+#inventory .item-viewer {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+#inventory .inventory-grid {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+#inventory .inventory-grid .item {
+    display: block;
+    width: 50px;
+    height: 50px;
+    float: left;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #000000;
+    overflow: hidden;
+}
+#inventory .inventory-grid .item .item-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
