@@ -4,263 +4,8 @@
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
     <title>Mr. Hunter</title>
-    <style>
-        *,
-        *:before,
-        *:after {
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-kerning: auto;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        html {
-            -webkit-text-size-adjust: 100%;
-            background-color:#ffffff;
-            height: 100%;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            position: relative;
-            font-size: 1.6em;
-            line-height: 1.4;
-            font-weight: 400;
-            font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
-            -webkit-text-size-adjust: 100%;
-            background-color:#ffffff;
-            color: #777777;
-            height: 100%;
-        }
-        #game {
-            display: block;
-            width: 600px;
-            height: 100%;
-            max-height: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 0;
-            border: 1px solid #ccc;
-            position: relative;
-        }
-        #header {
-            display: block;
-            width: 100%;
-            height: 65px;
-            text-align: center;
-            margin: 0;
-            padding: 15px;
-            background: #444;
-            color: #ffffff;
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            z-index: 999999;
-        }
-        #game-reset {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-        #battleground {
-            display: block;
-            width: 100%;
-            height: calc(100% - 100px);
-            text-align: center;
-            margin: 0;
-            padding: 65px 15px 15px 15px;
-            background: #eaeaea;
-            overflow-x: hidden;
-            overflow-y: scroll;
-        }
-        #character {
-            display: block;
-            width: 100%;
-            height: 100px;
-            text-align: center;
-            margin: 0;
-            padding: 15px;
-            background: #444;
-            color: #ffffff;
-            overflow: hidden;
-        }
-        .clearfix:after {
-            content: "";
-            display: block;
-            clear: both;
-        }
-        #character .character-left,
-        #character .character-right {
-            display: block;
-            width: 50%;
-            margin: 0;
-            padding: 0 15px;
-            float: left;
-        }
-        #character #player {
-        }
-        .healthbar {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: 20px;
-            background: darkred;
-        }
-        .healthbar .inner-health {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: block;
-            width: 100%;
-            height: 100%;
-            background: green;
-        }
-        .healthbar .health-digit {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: block;
-            width: 100%;
-            height: 100%;
-            color: #ffffff;
-            font-size: 12px;
-            line-height: 20px;
-            z-index: 999;
-        }
-        #character #weapon,
-        #character #potion {
-            display: block;
-            width: 50%;
-            height: 70px;
-            margin: 0;
-            padding: 0 15px;
-            float: left;
-        }
-        #character #weapon .inner,
-        #character #potion .inner {
-            display: block;
-            width: 100%;
-            height: 100%;
-            margin: 0 auto;
-            padding: 15px;
-            background: rgba(0,0,0,0.25);
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        #character #potion .inner {
-            line-height: 40px;
-        }
-        #character #weapon .inner img {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            margin: 0 auto;
-            vertical-align: middle;
-        }
-        @media screen and (max-width: 600px) {
-            #character .character-left {
-                width: 30%;
-            }
-            #character .character-right {
-                width: 70%;
-            }
-        }
-        @media screen and (max-width: 500px) {
-            #character {
-                height: 170px;
-            }
-            #battleground {
-                height: calc(100% - 170px);
-            }
-            #character #player {
-                display: block;
-                width: 25%;
-                float: left;
-            }
-            #character #health {
-                display: block;
-                width: 75%;
-                float: left;
-                margin-top: 7px;
-            }
-            #character .character-left,
-            #character .character-right {
-                width: 100%;
-                float: none;
-                clear: both;
-                padding: 0 0 15px 0;
-            }
-            #character #weapon {
-                padding: 0 0 0 15px;
-            }
-            #character #potion {
-                padding: 0 15px 0 0;
-            }
-        }
-        /*--- Monster ---*/
-        .monster {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            padding: 15px;
-            border: 4px solid transparent;
-            border-radius: 100px;
-            background: #000;
-        }
-        .monster:after {
-            content: "";
-            display: block;
-            clear: both;
-        }
-        .monster-img {
-            display: block;
-            width: 64px;
-            height: 64px;
-            float: left;
-            margin-top: 10px;
-            background-image:url(img/monsters.png);
-            background-repeat: no-repeat;
-            background-position: -2px -2px;
-            overflow: hidden;
-        }
-        .monster[data-element="fire"] {
-            border-color: #DA2F18;
-        }
-        .monster[data-element="water"] {
-            border-color: #1C50BE;
-        }
-        .monster[data-element="earth"] {
-            border-color: #2CAF34;
-        }
-        .monster[data-element="electric"] {
-            border-color: #F8CB05;
-        }
-        .monster .monster-details {
-            display: block;
-            width: calc(100% - 75px);
-            float: right;
-            font-size: 20px;
-            line-height: 20px;
-        }
-        .monster .monster-details .healthbar {
-            margin-top: 5px;
-        }
-        .monster .stats {
-            display: block;
-            margin: 0;
-            padding: 10px 0 0 0;
-            font-size: 14px;
-            line-height: 16px;
-        }
-    </style>
+    <link rel="stylesheet" href="game-icons.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
@@ -274,32 +19,10 @@
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
+    <!-- Inventory -->
+    <div id="inventory" class="clearfix"></div>
     <!-- Character -->
-    <div id="character" class="clearfix">
-        <div class="character-left clearfix">
-            <div id="player">
-                😊
-            </div>
-            <div id="health">
-                <div class="healthbar">
-                    <span class="health-digit"><span>100</span> ❤️</span>
-                    <div class="inner-health"></div>
-                </div>
-            </div>
-        </div>
-        <div class="character-right clearfix">
-            <div id="potion" class="player-potion">
-                <span class="inner">
-                    🍕
-                </span>
-            </div>
-            <div id="weapon" class="player-attack">
-                <span class="inner">
-                    <img src="img/Sword22.png">
-                </span>
-            </div>
-        </div>
-    </div>
+    <div id="character" class="clearfix"></div>
 </div><!-- #game -->
 
 <!-- Start JS -->
@@ -329,7 +52,7 @@ $(document).ready(function() {
      */
     function randomMonsterName() {
         var adjectives = ["little", "sea", "huge", "strange", "double", "prehistoric", "human", "marine", "hideous", "fabulous", "mythical", "terrible", "horrible", "moral", "headed", "eyed", "grotesque", "evil", "inhuman", "hopeful", "ugly", "winged", "fantastic", "giant", "mechanical", "imaginary", "like", "female", "savage", "frightful", "big", "mythological", "gigantic", "cruel", "antediluvian", "extinct", "ferocious", "eating", "green", "horrid", "supernatural", "fierce", "hairy", "maligned", "dangerous", "famous", "unnatural", "scary", "uncouth", "shapeless", "dreadful", "fearful", "headless", "cold", "baggy", "alien", "mighty", "bloodthirsty", "aquatic", "fearsome", "legendary", "unknown", "primeval", "sacred", "scaly", "hungry", "enormous", "loose", "unwieldy", "grim", "voracious", "fabled", "weird", "hybrid", "dead"];
-        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "hot air balloon", "praying mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "auto mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "mechanic", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
+        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "balloon", "mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
         return randomName(adjectives) + ' ' + randomName(nouns);
     }
     /**
@@ -358,10 +81,30 @@ $(document).ready(function() {
                     id: '001',
                     name: 'sword',
                     dmg: 25,
+                    el: 'water',
                     crit: 25 * 2,
-                    special: 25 + (25 / 2)
+                    special: 25 + (25 / 2),
+                    imgURL: 'img/Sword1.png'
                 }
             },
+            inventory:[{
+                id: '001',
+                name: 'sword',
+                dmg: 25,
+                el: 'water',
+                crit: 25 * 2,
+                special: 25 + (25 / 2),
+                imgURL: 'img/Sword1.png'
+            },
+            {
+                id: '002',
+                name: 'sword2',
+                dmg: 50,
+                el: 'earth',
+                crit: 100 * 2,
+                special: 100 + (100 / 2),
+                imgURL: 'img/Sword2.png'
+            }],
             level: 'stage1'
         };
         state.monsters = buildMonsters(state.player);
@@ -372,7 +115,9 @@ $(document).ready(function() {
     /**
      * Initial Load / Save
      */
+    renderCharacter(state.player);
     renderMonsters(state.monsters);
+    renderInventory(state.inventory);
     updatePlayer(state.player);
     /**
      * Save state
@@ -471,7 +216,7 @@ $(document).ready(function() {
         healthbar.find('.inner-health').width(newHealth + '%');
     }
     /**
-     * Update Player
+     * Grant XP
      * @param int
      */
     function grantXP(player, xp){
@@ -502,16 +247,74 @@ $(document).ready(function() {
         save(state);
     }
     /**
+     * Update Player Weapon
+     * @param player
+     */
+    function updatePlayerWeapon(player){
+        console.log('updatePlayerWeapon(player)');
+        var weaponHolder = $('#character #weapon .weapon-holder');
+        weaponHolder.empty();
+        weaponHolder.html('<img src="'+ player.weapon.imgURL +'">');
+        // Close Inventory
+        var inventory = $('#inventory');
+        if(inventory.hasClass('active')){
+            inventory.removeClass('active');
+        } else {
+            inventory.addClass('active');
+        }
+    }
+    /**
      * Level Complete
      * @param monsterID
      */
     function levelComplete(){
-        alert('Level Complete!');
+        alert('Level Complete! You found a new weapon! Check your inventory.');
         state.monsters = buildMonsters(state.player);
         renderMonsters(state.monsters);
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
+        //generate weapon
+        var weapon = generateWeapon(state.player);
+        if(state.inventory.length > 60) {
+            alert('You have too many items. please remove some before completing the next level.');
+        } else {
+            state.inventory.push(weapon);
+        }
+        renderInventory(state.inventory);
+        //save
         save(state);
+    }
+    /**
+     * Render Character
+     * @param player
+     */
+    function renderCharacter(player){
+        console.log('renderCharacter()');
+        var character = $('#character');
+        var frag = [];
+        if(character) {
+            character.empty();
+            frag.push('' +
+                '<div class="character-left clearfix">' +
+                '   <div id="player">😊</div>' +
+                '   <div id="health">' +
+                '       <div class="healthbar">' +
+                '           <span class="health-digit"><span>100</span> ❤️</span>' +
+                '           <div class="inner-health"></div>' +
+                '       </div>' +
+                '   </div>' +
+                '</div>' +
+                '<div class="character-right clearfix">' +
+                '   <div id="potion" class="player-potion">' +
+                '   <span class="inner">🍕</span>' +
+                '</div>' +
+                '<div id="weapon" class="open-inventory">' +
+                '   <span class="weapon-holder inner">' +
+                '       <img src="'+ player.weapon.imgURL +'">' +
+                '   </span>' +
+                '</div>');
+            character.append(frag.join(''));
+        }
     }
     /**
      * Build Monsters
@@ -520,7 +323,7 @@ $(document).ready(function() {
     function buildMonsters(player){
         console.log('buildMonsters()');
         var monsters = [];
-        var monster_number = randomIntFromInterval(1,10);
+        var monster_number = randomIntFromInterval(3,10);
         var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
             var monster_health = randomIntFromInterval(100,200);
@@ -562,18 +365,19 @@ $(document).ready(function() {
                     '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
                     '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
                     '   <div class="monster-details">' +
-                    '      <span class="level">Lvl: ' + monsters[i].lvl + '</span>' +
-                    '      <span class="name">' + monsters[i].name + '</span>' +
-                    '      <div class="healthbar">' +
-                    '          <span class="health-digit"><span>' + monsters[i].maxHealth + '</span> ❤️</span>' +
+                    '       <span class="name">' + monsters[i].name + '</span>' +
+                    '       <div class="healthbar">' +
+                    '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span> ❤️</span>' +
                     '           <div class="inner-health"></div>' +
                     '       </div>' +
-                    '      <div class="stats">' +
-                    '          <span class="elemental">el: <span>' + monsters[i].el + '</span>️</span> | ' +
-                    '          <span class="dmg">dmg: <span>' + monsters[i].dmg + '</span>️</span> | ' +
-                    '          <span class="armor">armor: <span>' + monsters[i].armor + '</span>️</span>' +
+                    '       <div class="stats clearfix">' +
+                    '           <span class="level">LVL: ' + monsters[i].lvl + '</span>' +
+                    '           <span class="dmg">dmg: <span>' + monsters[i].dmg + '</span>️</span>' +
+                    '           <span class="elemental">el: <span>' + monsters[i].el + '</span>️</span>' +
+                    '           <span class="armor">armor: <span>' + monsters[i].armor + '</span>️</span>' +
                     '       </div>' +
                     '   </div>' +
+                    '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
                     '</div>');
             }
             battleground.append(frag.join(''));
@@ -582,15 +386,71 @@ $(document).ready(function() {
         }
     }
     /**
+     * Render the inventory with items owned
+     * @param inventory
+     */
+    function renderInventory(inventory){
+        console.log('renderInventory()');
+        // Update Healthbar
+        var holder = $('#inventory');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<div class="item-viewer"></div>');
+            frag.push('<div class="inventory-grid clearfix">');
+            for (i=0;i < inventory.length; i++) {
+                frag.push('' +
+                    '<div class="item" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '">' +
+                    '   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
+                    '</div>');
+            }
+            frag.push('</div>');
+            holder.append(frag.join(''));
+        }
+    }
+    /**
+     * Generate Weapon
+     * @param player
+     */
+    function generateWeapon(player){
+        console.log('generateWeapon()');
+        var weapon_number = state.inventory.length + 1;
+        var weaponID = 'w' + weapon_number.toString();
+        var weapon_dmg = randomIntFromInterval(player.lvl+25,player.lvl+50);
+        var weapon_img = 'img/Sword'+ randomIntFromInterval(1,23) +'.png';
+        var weapon = {
+            id: weaponID,
+            name: randomMonsterName(),
+            dmg: weapon_dmg,
+            el: randomElemental(),
+            crit: weapon_dmg * 2,
+            special: weapon_dmg + (weapon_dmg / 2),
+            imgURL: weapon_img
+        };
+        return weapon;
+    }
+    /**
+     * Get Weapon
+     * @param itemID
+     */
+    function getWeapon(weaponID){
+        for(i=0;i<state.inventory.length;i++){
+            if(state.inventory[i].id === weaponID){
+                return state.inventory[i];
+            }
+        }
+    }
+    /**
      * Actions / Buttons
      */
+    // Player Attack
     $(document).on('click', '.player-attack', function() {
-    //$('.player-attack').click(function(){
         console.log(state.monsters);
         var player = state.player;
         var monsterID = $('#battleground > .monster:last-of-type').data('monster');
         var monster = getMonster(monsterID);
-        //console.log(monster);
+        var battleground = $('#battleground');
+        battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         attack(player, monster);
         /*console.log('player health = ' + player.health);
         console.log('monster health = ' + monster.health);
@@ -598,18 +458,45 @@ $(document).ready(function() {
         console.log('monster health = ' + monster.maxHealth);
         console.log(player);*/
     });
+    // Player Potion
     $(document).on('click', '.player-potion', function() {
-    //$('.player-potion').click(function(){
         var player = state.player;
         player.health = player.health+100;
         if(player.health > player.maxHealth){
             player.health = player.maxHealth;
         }
         updatePlayer(player);
-        console.log('player health = ' + player.health);
     });
+    // Game Reset
     $(document).on('click', '#game-reset', function() {
         gameReset();
+    });
+    // Attack Monster
+    $('#battleground').on('click', '.attack-monster', function() {
+        var current_monster = $(this).closest('.monster');
+        var player = state.player;
+        var monsterID = current_monster.data('monster');
+        var monster = getMonster(monsterID);
+        console.log(player);
+        attack(player, monster);
+    });
+    // Open Inventory
+    $('#character').on('click', '.open-inventory', function() {
+        //$('#inventory').animate({ bottom: '100px'}, 1000);
+        var inventory = $('#inventory');
+        if(inventory.hasClass('active')){
+            inventory.removeClass('active');
+        } else {
+            inventory.addClass('active');
+        }
+    });
+    // Set Item from inventory
+    $('#inventory').on('click', '.item', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        state.player.weapon = weapon;
+        updatePlayerWeapon(state.player);
+        save(state);
     });
 
 
