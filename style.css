@@ -24,7 +24,7 @@ body {
     margin: 0;
     padding: 0;
     position: relative;
-    font-size: 1.6em;
+    font-size: 1.4em;
     line-height: 1.4;
     font-weight: 400;
     font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
@@ -33,6 +33,96 @@ body {
     color: #777777;
     height: 100%;
 }
+/*---------------------*
+ *------ Buttons ------*
+ *---------------------*/
+[data-button],
+[data-button]:visited,
+button,
+button:visited {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    width: auto;
+    margin: .5em auto;
+    padding: .5em 1.25em .55em 1.25em;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    background: #608f06;
+    font-weight: 600;
+    font-kerning: auto;
+    text-decoration: none !important;
+    text-align: center;
+    font-size: 1em;
+    line-height: 1;
+    color: #ffffff !important;
+    text-transform: none;
+    border: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+    /*box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);*/
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    border-radius: 4px;
+    text-shadow: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+[data-button]:hover,
+[data-button]:focus,
+button:hover,
+button:focus {
+    background: #416400;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+}
+[data-button]:active,
+button:active {
+    background: #416400;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.75);
+}
+.button-large {
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
+.button-wide {
+    padding: .4em 1.6em .36em 1.6em;
+}
+/*--- Green Button ---*/
+[data-button="red"],
+[data-button="red"]:hover,
+[data-button="red"]:focus,
+[data-button="red"]:active,
+[data-button="red"]:visited {
+    background: #d70033;
+}
+[data-button="red"]:hover,
+[data-button="red"]:focus {
+    background: #b2002c;
+}
+[data-button="red"]:active {
+    background: #940028;
+}
+/*--- Layout ---*/
 #game {
     display: block;
     width: 600px;
@@ -45,6 +135,7 @@ body {
     position: relative;
     overflow: hidden;
 }
+/*--- Header ---*/
 #header {
     display: block;
     width: 100%;
@@ -58,6 +149,15 @@ body {
     position: absolute;
     top: 0;
     z-index: 999999;
+}
+#header .open-inventory {
+    display: block;
+    float: left;
+    cursor: pointer;
+}
+#header .open-inventory i {
+    font-size: 30px;
+    line-height: 30px;
 }
 #game-reset {
     position: absolute;
@@ -100,6 +200,12 @@ body {
     float: left;
 }
 #character #player {
+
+}
+#character #player i.gi {
+    display: block;
+    font-size: 50px;
+    line-height: 50px;
 }
 .healthbar {
     position: relative;
@@ -315,17 +421,48 @@ body {
 #inventory.active {
     top: 65px;
 }
-#inventory .item-viewer {
+#inventory #item-viewer {
     display: block;
+    position: relative;
     width: 100%;
     height: auto;
-    margin: 0;
+    margin: 0 0 15px 0;
     padding: 0;
+    border-bottom: 1px solid #222;
+    background-repeat: no-repeat;
+    background-size: auto 75%;
+    background-position: right center;
 }
-#inventory .item-viewer {
+#inventory #item-viewer .stats {
+    display: block;
+    width: 100px;
+    float: left;
+    margin: 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    font-size: 14px;
+    line-height: 16px;
+    color: #ffffff;
+}
+#inventory #item-viewer .actions {
+    display: block;
+    width: auto;
+    float: left;
+    margin: 0;
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 16px;
+    color: #ffffff;
+}
+#inventory #item-viewer .actions button {
+    margin: 0;
+}
+#inventory #item-viewer .actions button.equip {
+    margin-bottom: 10px;
+}
+#inventory #item-viewer .stats > span {
     display: block;
     width: 100%;
-    height: auto;
     margin: 0;
     padding: 0;
 }
