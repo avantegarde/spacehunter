@@ -12,6 +12,7 @@
 <div id="game" class="clearfix">
     <!-- Header -->
     <div id="header" class="clearfix">
+        <span class="open-inventory"><i class="gi gi-backpack"></i></span>
         <span id="level">Lvl: <span></span></span>
         <span id="xp">XP: <span></span></span>
         <!-- <span id="units">units: 0</span> -->
@@ -262,6 +263,27 @@ $(document).ready(function() {
         } else {
             inventory.addClass('active');
         }
+        save(state);
+    }
+    /**
+     * Delete Inventory Item
+     * @param itemID
+     */
+    function deleteInventoryItem(itemID){
+        console.log('deleteInventoryItem(inventory)');
+        var inventory = state.inventory;
+        for(i=0;i<inventory.length; i++){
+            var itemIndex = inventory.indexOf(inventory[i]);
+            if(inventory[i].id === itemID){
+                if(state.player.weapon.id === itemID) {
+                    alert('You cannot delete an equipped weapon.');
+                } else {
+                    inventory.splice(itemIndex, 1);
+                }
+            }
+        }
+        renderInventory(inventory);
+        save(state);
     }
     /**
      * Level Complete
@@ -296,7 +318,7 @@ $(document).ready(function() {
             character.empty();
             frag.push('' +
                 '<div class="character-left clearfix">' +
-                '   <div id="player">😊</div>' +
+                '   <div id="player"><i class="gi gi-astronaut-helmet"></i></div>' +
                 '   <div id="health">' +
                 '       <div class="healthbar">' +
                 '           <span class="health-digit"><span>100</span> ❤️</span>' +
@@ -308,7 +330,7 @@ $(document).ready(function() {
                 '   <div id="potion" class="player-potion">' +
                 '   <span class="inner">🍕</span>' +
                 '</div>' +
-                '<div id="weapon" class="open-inventory">' +
+                '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner">' +
                 '       <img src="'+ player.weapon.imgURL +'">' +
                 '   </span>' +
@@ -396,7 +418,7 @@ $(document).ready(function() {
         var frag = [];
         if(holder) {
             holder.empty();
-            frag.push('<div class="item-viewer"></div>');
+            frag.push('<div id="item-viewer" class="clearfix"></div>');
             frag.push('<div class="inventory-grid clearfix">');
             for (i=0;i < inventory.length; i++) {
                 frag.push('' +
@@ -405,6 +427,34 @@ $(document).ready(function() {
                     '</div>');
             }
             frag.push('</div>');
+            holder.append(frag.join(''));
+            renderWeaponViewer();
+        }
+    }
+    /**
+     * Render the inventory Viewer
+     * @param item
+     */
+    function renderWeaponViewer(weapon){
+        console.log('renderWeaponViewer()');
+        var holder = $('#item-viewer');
+        var frag = [];
+        if(!weapon || weapon == '') {
+            var weapon = state.player.weapon;
+        }
+        if(holder) {
+            holder.empty();
+            holder.css('background-image', 'url(' + weapon.imgURL + ')');
+            frag.push('' +
+                '<div class="stats">' +
+                '   <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
+                '   <span class="element">el: ' + weapon.el + '</span>' +
+                '   <span class="special">sp: ' + weapon.special + '</span>' +
+                '</div>' +
+                '<div class="actions">' +
+                '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button><br>' +
+                '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="gi gi-trash-can"></i></button>' +
+                '</div>');
             holder.append(frag.join(''));
         }
     }
@@ -481,7 +531,7 @@ $(document).ready(function() {
         attack(player, monster);
     });
     // Open Inventory
-    $('#character').on('click', '.open-inventory', function() {
+    $('#header').on('click', '.open-inventory', function() {
         //$('#inventory').animate({ bottom: '100px'}, 1000);
         var inventory = $('#inventory');
         if(inventory.hasClass('active')){
@@ -490,13 +540,31 @@ $(document).ready(function() {
             inventory.addClass('active');
         }
     });
-    // Set Item from inventory
+    // Open item in viewer
     $('#inventory').on('click', '.item', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        var viewer = $('#item-viewer');
+        renderWeaponViewer(weapon);
+        //state.player.weapon = weapon;
+        //updatePlayerWeapon(state.player);
+        //save(state);
+    });
+    // Set Item from inventory
+    $(document).on('click', '#item-viewer button.equip', function() {
         var weaponID = $(this).data('item-id');
         var weapon = getWeapon(weaponID);
         state.player.weapon = weapon;
         updatePlayerWeapon(state.player);
-        save(state);
+    });
+    // Delete Item from inventory
+    $(document).on('click', '#item-viewer button.delete', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        var deleteConfirm = confirm("Are you SURE you want to delete this item?");
+        if (deleteConfirm == true) {
+            deleteInventoryItem(weapon.id);
+        }
     });
 
 
