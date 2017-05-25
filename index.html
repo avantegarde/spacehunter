@@ -67,7 +67,7 @@ $(document).ready(function() {
      */
     var SAVE_KEY = 'game_save';
     var state = load();
-    if (state && state.monsters) {
+    if (state && state.monsters && state.inventory) {
         state = state;
     } else {
         var state = {
