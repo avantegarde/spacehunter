@@ -403,7 +403,6 @@ $(document).ready(function() {
                     '</div>');
             }
             battleground.append(frag.join(''));
-            //battleground[0].scrollTop = battleground[0].scrollHeight;
             battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         }
     }
@@ -499,14 +498,9 @@ $(document).ready(function() {
         var player = state.player;
         var monsterID = $('#battleground > .monster:last-of-type').data('monster');
         var monster = getMonster(monsterID);
-        var battleground = $('#battleground');
-        battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
+        //var battleground = $('#battleground');
+        //battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         attack(player, monster);
-        /*console.log('player health = ' + player.health);
-        console.log('monster health = ' + monster.health);
-        console.log('player health = ' + player.maxHealth);
-        console.log('monster health = ' + monster.maxHealth);
-        console.log(player);*/
     });
     // Player Potion
     $(document).on('click', '.player-potion', function() {
