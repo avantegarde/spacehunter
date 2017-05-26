@@ -348,9 +348,9 @@ button:active {
     width: 100%;
     margin: 10px 0;
     padding: 15px;
-    border: 4px solid transparent;
+    border: 1px solid transparent;
     text-align: left;
-    border-radius: 100px;
+    border-radius: 5px;
     background: rgba(0,0,0,0.8);
     overflow: hidden;
     box-shadow: 0 1px 15px #000000;
@@ -374,15 +374,19 @@ button:active {
 }
 .monster[data-element="fire"] {
     border-color: #DA2F18;
+    border-color: rgba(218, 47, 24, 0.5);
 }
 .monster[data-element="water"] {
     border-color: #1C50BE;
+    border-color: rgba(28, 80, 190, 0.5);
 }
 .monster[data-element="earth"] {
     border-color: #2CAF34;
+    border-color: rgba(44, 175, 52, 0.5);
 }
 .monster[data-element="electric"] {
     border-color: #F8CB05;
+    border-color: rgba(248, 203, 5, 0.5);
 }
 .monster .monster-details {
     display: block;
@@ -438,6 +442,16 @@ button:active {
     border-radius: 50%;
     background: transparent;
     color: #DA2F18;
+}
+@media screen and (max-width: 450px) {
+    .monster .monster-details .name {
+        font-size: 16px;
+        line-height: 16px;
+    }
+    .monster .stats {
+        font-size: 12px;
+        line-height: 14px;
+    }
 }
 /*--- Inventory ---*/
 #inventory {
