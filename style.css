@@ -17,7 +17,7 @@
 }
 html {
     -webkit-text-size-adjust: 100%;
-    background-color:#ffffff;
+    background-color:#222222;
     height: 100%;
 }
 body {
@@ -29,7 +29,7 @@ body {
     font-weight: 400;
     font-family: 'Open Sans', 'Source Sans Pro', Roboto, 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Myriad Pro', 'Segoe UI', Myriad, Helvetica, 'Lucida Grande', 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, Arial, sans-serif;
     -webkit-text-size-adjust: 100%;
-    background-color:#ffffff;
+    background-color:#222222;
     color: #777777;
     height: 100%;
 }
@@ -131,7 +131,7 @@ button:active {
     max-width: 100%;
     margin: 0 auto;
     padding: 0;
-    border: 1px solid #ccc;
+    border: 1px solid #000000;
     position: relative;
     overflow: hidden;
 }
@@ -171,7 +171,7 @@ button:active {
     text-align: center;
     margin: 0;
     padding: 65px 15px 15px 15px;
-    background: #eaeaea;
+    background: #000000;
     background-image:url(img/bg1.jpg);
     background-size: cover;
     background-repeat: no-repeat;
@@ -413,11 +413,10 @@ button:active {
     display: block;
     width: 100%;
     height: auto;
-    max-height: calc(100% - 165px);
-    overflow-x: hidden;
-    overflow-y: scroll;
+    height: calc(100% - 65px);
+    overflow: hidden;
     margin: 0;
-    padding: 15px;
+    padding: 0;
     position: absolute;
     top: -100%;
     background: rgba(0,0,0,0.8);
@@ -434,11 +433,11 @@ button:active {
     width: 100%;
     height: auto;
     margin: 0 0 15px 0;
-    padding: 0;
+    padding: 15px;
     border-bottom: 1px solid #222;
     background-repeat: no-repeat;
-    background-size: auto 75%;
-    background-position: right center;
+    background-size: auto 70%;
+    background-position: right 15px center;
 }
 #inventory #item-viewer .stats {
     display: block;
@@ -475,10 +474,13 @@ button:active {
 }
 #inventory .inventory-grid {
     display: block;
-    width: 100%;
-    height: auto;
+    width: calc(100% + 40px);
+    height: 100%;
+    max-height: calc(100% - 115px);
     margin: 0;
-    padding: 0;
+    padding: 15px 55px 15px 15px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 #inventory .inventory-grid .item {
     display: block;
@@ -487,7 +489,8 @@ button:active {
     float: left;
     margin: 5px;
     padding: 5px;
-    border: 1px solid #000000;
+    border: 1px solid #cccccc;
+    background: #000000;
     overflow: hidden;
 }
 #inventory .inventory-grid .item .item-img {
@@ -501,7 +504,7 @@ button:active {
     background-repeat: no-repeat;
 }
 @media screen and (max-width: 500px) {
-    #inventory {
+    /*#inventory {
         max-height: calc(100% - 235px);
-    }
+    }*/
 }
