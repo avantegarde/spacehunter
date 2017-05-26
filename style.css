@@ -143,7 +143,7 @@ button:active {
     text-align: center;
     margin: 0;
     padding: 15px;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.8);
     color: #ffffff;
     overflow: hidden;
     position: absolute;
@@ -420,7 +420,7 @@ button:active {
     padding: 15px;
     position: absolute;
     top: -100%;
-    background: #cccccc;
+    background: rgba(0,0,0,0.8);
     z-index: 99999;
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
