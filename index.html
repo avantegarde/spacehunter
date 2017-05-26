@@ -10,9 +10,10 @@
 </head>
 <body>
 <div id="game" class="clearfix">
+    <div id="notif"></div>
     <!-- Header -->
     <div id="header" class="clearfix">
-        <span class="open-inventory"><i class="gi gi-backpack"></i></span>
+        <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
         <span id="level">Lvl: <span></span></span>
         <span id="xp">XP: <span></span></span>
         <!-- <span id="units">units: 0</span> -->
@@ -76,8 +77,8 @@ $(document).ready(function() {
                 lvl: 1,
                 xp: 0,
                 units: 10,
-                health: 1000,
-                maxHealth: 1000,
+                health: 100,
+                maxHealth: 100,
                 weapon: {
                     id: '001',
                     name: 'sword',
@@ -96,15 +97,6 @@ $(document).ready(function() {
                 crit: 25 * 2,
                 special: 25 + (25 / 2),
                 imgURL: 'img/Sword1.png'
-            },
-            {
-                id: '002',
-                name: 'sword2',
-                dmg: 50,
-                el: 'earth',
-                crit: 100 * 2,
-                special: 100 + (100 / 2),
-                imgURL: 'img/Sword2.png'
             }],
             level: 'stage1'
         };
@@ -142,15 +134,75 @@ $(document).ready(function() {
         window.location.reload(true);
     }
     /**
+     * Game Reset
+     * usage: notif.ok('OK!');
+     * usage: notif.err('Error!');
+     */
+    var notif = {
+        ok: function(message){
+            var holder = $('#notif');
+            holder.removeClass();
+            holder.addClass('ok');
+            displayNotification(message);
+        },
+        err: function(message){
+            var holder = $('#notif');
+            holder.removeClass();
+            holder.addClass('err');
+            displayNotification(message);
+        }
+    };
+    function displayNotification(message) {
+        var holder = $('#notif');
+        holder.empty();
+        holder.append(message);
+        holder.addClass('active');
+        setTimeout(function(){
+            holder.removeClass('active');
+            setTimeout(function(){
+                holder.empty();
+            }, 3500);
+        }, 3000);
+    }
+    /**
+     * Coin Toss
+     * returns true or false
+     */
+    function coinToss() {
+        console.log(Math.random())
+        return Math.random() > 0.5;
+    }
+    function rollDice(n){
+        var number = n?n:1;
+        var x = Math.floor(Math.random() * ((6-1)+1) + 1);
+        var y = Math.floor(Math.random() * ((6-1)+1) + 1);
+        if(number === 2) {
+            var total = x + y;
+        } else {
+            total = x;
+        }
+        return total;
+    }
+    /**
      * Attack
      */
     function attack(player, monster){
         var playerHealth = player.health;
         var playerDMG = player.weapon.dmg;
+        var playerCrit = player.weapon.crit;
+        var weaponEl = player.weapon.el;
         var monsterHealth = monster.health;
         var monsterDMG = monster.dmg;
+        var monsterEl = monster.el;
+        var critRollPlayer = rollDice(2);
+        var critRollMonster = rollDice(2);
 
-        monster.health = monsterHealth - playerDMG;
+        if(critRollPlayer === 7){
+            criticalHitMonster(monster);
+            monster.health = monsterHealth - playerCrit;
+        } else {
+            monster.health = monsterHealth - playerDMG;
+        }
         if (monster.health < 1) {
             grantXP(player, 125);
             destroyMonster(monster);
@@ -160,13 +212,42 @@ $(document).ready(function() {
             }
         } else {
             updateMonster(monster);
-            player.health = playerHealth - monsterDMG;
+            if(critRollMonster === 7){
+                criticalHitPlayer();
+                player.health = playerHealth - monster.crit;
+            } else {
+                player.health = playerHealth - monsterDMG;
+            }
         }
         if (player.health < 1) {
             destroyPlayer(player);
         } else {
             updatePlayer(player);
         }
+    }
+    /**
+     * Critical Hit Player
+     */
+    function criticalHitPlayer() {
+        var healthbar = $('#character .healthbar');
+        healthbar.addClass('animated headShake');
+        healthbar.find('.inner-health').addClass('animated headShake');
+        setTimeout(function(){
+            healthbar.removeClass('animated headShake');
+            healthbar.find('.inner-health').removeClass('animated headShake');
+        }, 1000);
+    }
+    /**
+     * Critical Hit Monster
+     */
+    function criticalHitMonster(monster) {
+        var healthbar = $('.monster[data-monster="'+ monster.name +'"]').find('.healthbar');
+        healthbar.addClass('animated headShake');
+        healthbar.find('.inner-health').addClass('animated headShake');
+        setTimeout(function(){
+            healthbar.removeClass('animated headShake');
+            healthbar.find('.inner-health').removeClass('animated headShake');
+        }, 1000);
     }
     /**
      * Get Monster
@@ -235,7 +316,7 @@ $(document).ready(function() {
      */
     function destroyPlayer(player){
         console.log('destroyPlayer(player)');
-        alert('You Died! 😢');
+        notif.err('You Died! 😢');
         //gameReset();
         var player_lvl = (player.lvl>1)?(player.lvl-1):1;
         state.player.lvl = player_lvl;
@@ -276,7 +357,7 @@ $(document).ready(function() {
             var itemIndex = inventory.indexOf(inventory[i]);
             if(inventory[i].id === itemID){
                 if(state.player.weapon.id === itemID) {
-                    alert('You cannot delete an equipped weapon.');
+                    notif.err('You cannot delete an equipped weapon.');
                 } else {
                     inventory.splice(itemIndex, 1);
                 }
@@ -290,15 +371,16 @@ $(document).ready(function() {
      * @param monsterID
      */
     function levelComplete(){
-        alert('Level Complete! You found a new weapon! Check your inventory.');
+        notif.ok('Level Complete! You found a new weapon! Check your inventory.');
         state.monsters = buildMonsters(state.player);
         renderMonsters(state.monsters);
+        state.player.maxHealth = state.player.maxHealth + 10;
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
         //generate weapon
         var weapon = generateWeapon(state.player);
         if(state.inventory.length > 60) {
-            alert('You have too many items. please remove some before completing the next level.');
+            notif.err('You have too many items. please remove some before completing the next level.');
         } else {
             state.inventory.push(weapon);
         }
@@ -348,8 +430,10 @@ $(document).ready(function() {
         var monster_number = randomIntFromInterval(3,10);
         var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
-            var monster_health = randomIntFromInterval(100,200);
-            var monster_dmg = randomIntFromInterval(10,50);
+            var healthCalc = player.lvl * 100;
+            var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
+            var monster_dmg = randomIntFromInterval(player.maxHealth / 6,player.maxHealth / 4.1);
+            var monster_crit = randomIntFromInterval(monster_dmg * 1.25,monster_dmg * 1.75);
             var monster_armor = 10*Math.floor(Math.random()*11);
             var sprite_x = 64*Math.floor(Math.random()*16);
             var sprite_y = 64*Math.floor(Math.random()*16);
@@ -357,7 +441,7 @@ $(document).ready(function() {
                 lvl: monster_lvl,
                 el: randomElemental(),
                 dmg: monster_dmg,
-                crit: monster_dmg * 2,
+                crit: monster_crit,
                 armor: monster_armor,
                 health: monster_health,
                 maxHealth: monster_health,
@@ -446,8 +530,9 @@ $(document).ready(function() {
             holder.css('background-image', 'url(' + weapon.imgURL + ')');
             frag.push('' +
                 '<div class="stats">' +
-                '   <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
                 '   <span class="element">el: ' + weapon.el + '</span>' +
+                '   <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
+                '   <span class="crit">crit: ' + weapon.crit + '</span>' +
                 '   <span class="special">sp: ' + weapon.special + '</span>' +
                 '</div>' +
                 '<div class="actions">' +
@@ -455,6 +540,12 @@ $(document).ready(function() {
                 '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="gi gi-trash-can"></i></button>' +
                 '</div>');
             holder.append(frag.join(''));
+
+            $('.inventory-grid .item').removeClass('active');
+            var selectedItem = $('.inventory-grid .item[data-item-id="'+ weapon.id +'"]');
+            if(!selectedItem.hasClass('active')){
+                selectedItem.addClass('active');
+            }
         }
     }
     /**
@@ -465,15 +556,16 @@ $(document).ready(function() {
         console.log('generateWeapon()');
         var weapon_number = state.inventory.length + 1;
         var weaponID = 'w' + weapon_number.toString();
-        var weapon_dmg = randomIntFromInterval(player.lvl+25,player.lvl+50);
+        var weapon_dmg = randomIntFromInterval(player.lvl*1.5+25,player.lvl*2+50);
+        var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
         var weapon_img = 'img/Sword'+ randomIntFromInterval(1,23) +'.png';
         var weapon = {
             id: weaponID,
             name: randomMonsterName(),
             dmg: weapon_dmg,
             el: randomElemental(),
-            crit: weapon_dmg * 2,
-            special: weapon_dmg + (weapon_dmg / 2),
+            crit: weapon_crit,
+            special: weapon_dmg + weapon_crit,
             imgURL: weapon_img
         };
         return weapon;
@@ -487,6 +579,17 @@ $(document).ready(function() {
             if(state.inventory[i].id === weaponID){
                 return state.inventory[i];
             }
+        }
+    }
+    /**
+     * Toggle Inventory
+     */
+    function toggleInventory(){
+        var inventory = $('#inventory');
+        if(inventory.hasClass('active')){
+            inventory.removeClass('active');
+        } else {
+            inventory.addClass('active');
         }
     }
     /**
@@ -505,7 +608,7 @@ $(document).ready(function() {
     // Player Potion
     $(document).on('click', '.player-potion', function() {
         var player = state.player;
-        player.health = player.health+100;
+        player.health = player.health+50;
         if(player.health > player.maxHealth){
             player.health = player.maxHealth;
         }
@@ -525,14 +628,8 @@ $(document).ready(function() {
         attack(player, monster);
     });
     // Open Inventory
-    $('#header').on('click', '.open-inventory', function() {
-        //$('#inventory').animate({ bottom: '100px'}, 1000);
-        var inventory = $('#inventory');
-        if(inventory.hasClass('active')){
-            inventory.removeClass('active');
-        } else {
-            inventory.addClass('active');
-        }
+    $(document).on('click', '.toggle-inventory', function() {
+        toggleInventory();
     });
     // Open item in viewer
     $('#inventory').on('click', '.item', function() {
@@ -540,9 +637,6 @@ $(document).ready(function() {
         var weapon = getWeapon(weaponID);
         var viewer = $('#item-viewer');
         renderWeaponViewer(weapon);
-        //state.player.weapon = weapon;
-        //updatePlayerWeapon(state.player);
-        //save(state);
     });
     // Set Item from inventory
     $(document).on('click', '#item-viewer button.equip', function() {
