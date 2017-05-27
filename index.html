@@ -79,6 +79,7 @@ $(document).ready(function() {
                 units: 10,
                 health: 100,
                 maxHealth: 100,
+                potionCount: 25,
                 weapon: {
                     id: '001',
                     name: 'sword',
@@ -110,7 +111,11 @@ $(document).ready(function() {
      * Initial Load / Save
      */
     renderCharacter(state.player);
-    renderMonsters(state.monsters);
+    if(state.boss) {
+        renderBoss(state.boss);
+    } else {
+        renderMonsters(state.monsters);
+    }
     renderInventory(state.inventory);
     updatePlayer(state.player);
     /**
@@ -170,7 +175,6 @@ $(document).ready(function() {
      * returns true or false
      */
     function coinToss() {
-        console.log(Math.random())
         return Math.random() > 0.5;
     }
     function rollDice(n){
@@ -287,6 +291,14 @@ $(document).ready(function() {
         console.log('destroyMonster(monster)');
         $('.monster[data-monster="'+ monster.name +'"]').remove();
         state.killCount = state.killCount+1;
+        var multiple_potions = coinToss();
+        var potion_number = randomIntFromInterval(2,4);
+        if(multiple_potions) {
+            grantPotions(state.player, potion_number);
+        } else {
+            grantPotions(state.player, 1);
+        }
+        updatePlayer(state.player);
     }
     /**
      * Update Player
@@ -304,6 +316,9 @@ $(document).ready(function() {
         healthbar.find('.health-digit > span').html(player.health);
         var newHealth = Math.floor( (player.health / player.maxHealth) * 100);
         healthbar.find('.inner-health').width(newHealth + '%');
+        // Update PotionCount
+        var potions = $('#character #potion');
+        potions.find('span.potion-count').html(player.potionCount);
     }
     /**
      * Grant XP
@@ -316,6 +331,16 @@ $(document).ready(function() {
             var lvlInc = Math.floor(player.xp / 1000);
             player.lvl = player.lvl + lvlInc;
             player.xp = player.xp - (lvlInc * 1000);
+        }
+    }
+    /**
+     * Grant potions
+     * @param int
+     */
+    function grantPotions(player, int){
+        console.log('grantPotions(int)');
+        if (player.potionCount < 999) {
+            player.potionCount = player.potionCount + int;
         }
     }
     /**
@@ -428,7 +453,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="character-right clearfix">' +
                 '   <div id="potion" class="player-potion">' +
-                '   <span class="inner">🍕</span>' +
+                '   <span class="inner">🍕 <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
                 '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner">' +
@@ -448,8 +473,11 @@ $(document).ready(function() {
         var monster_number = randomIntFromInterval(3,10);
         var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
-            var healthCalc = player.lvl * 100;
+            var healthCalc = player.lvl * 50;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
+            if (monster_health < 100) {
+                monster_health = 100;
+            }
             var monster_dmg = randomIntFromInterval(player.maxHealth / 8,player.maxHealth / 6);
             var monster_crit = randomIntFromInterval(monster_dmg * 1.25,monster_dmg * 1.75);
             var monster_armor = 10*Math.floor(Math.random()*11);
@@ -479,12 +507,13 @@ $(document).ready(function() {
      */
     function renderMonsters(monsters){
         console.log('renderMonsters()');
-        // Update Healthbar
+        // Render Monsters
         var battleground = $('#battleground');
         var frag = [];
         if(battleground) {
             battleground.empty();
-            for (var i = monsters.length - 1; i >= 0; --i) {
+            //for (var i = monsters.length - 1; i >= 0; --i) {
+            for (i=0;i < monsters.length; i++) {
                 frag.push('' +
                     '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
                     '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
@@ -516,8 +545,11 @@ $(document).ready(function() {
         console.log('buildBoss()');
         var boss_number = 1;
         var boss_lvl = player.lvl;
-        var healthCalc = player.lvl * 300;
+        var healthCalc = player.lvl * 100;
         var boss_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
+        if (boss_health < 200) {
+            boss_health = 200;
+        }
         var boss_dmg = randomIntFromInterval(player.maxHealth / 4,player.maxHealth / 3);
         var boss_crit = randomIntFromInterval(boss_dmg * 1.25,boss_dmg * 1.75);
         var boss_armor = 10*Math.floor(Math.random()*22);
@@ -689,11 +721,18 @@ $(document).ready(function() {
     // Player Potion
     $(document).on('click', '.player-potion', function() {
         var player = state.player;
-        player.health = player.health+50;
+        var potionVal = Math.floor(player.maxHealth / 4.33);
+        if(player.potionCount > 0) {
+            if(player.health < player.maxHealth){
+                player.health = player.health + potionVal;
+                player.potionCount = player.potionCount - 1;
+            }
+        }
         if(player.health > player.maxHealth){
             player.health = player.maxHealth;
         }
         updatePlayer(player);
+        save(state);
     });
     // Game Reset
     $(document).on('click', '#game-reset', function() {
