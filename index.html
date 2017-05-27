@@ -292,7 +292,7 @@ $(document).ready(function() {
         $('.monster[data-monster="'+ monster.name +'"]').remove();
         state.killCount = state.killCount+1;
         var multiple_potions = coinToss();
-        var potion_number = randomIntFromInterval(2,4);
+        var potion_number = randomIntFromInterval(2,3);
         if(multiple_potions) {
             grantPotions(state.player, potion_number);
         } else {
