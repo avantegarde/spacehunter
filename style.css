@@ -294,6 +294,10 @@ button:active {
 #character #potion .inner {
     line-height: 40px;
 }
+#character #potion span.potion-count {
+    font-size: 12px;
+    vertical-align: top;
+}
 #character #weapon .inner img {
     display: inline-block;
     width: 32px;
