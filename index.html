@@ -69,7 +69,7 @@ $(document).ready(function() {
      */
     var SAVE_KEY = 'game_save';
     var state = load();
-    if (state && state.monsters && state.inventory) {
+    if (state && state.monsters && state.inventory && state.killCount) {
         state = state;
     } else {
         var state = {
@@ -98,7 +98,8 @@ $(document).ready(function() {
                 special: 25 + (25 / 2),
                 imgURL: 'img/Sword1.png'
             }],
-            level: 'stage1'
+            level: 'stage1',
+            killCount: 0
         };
         state.monsters = buildMonsters(state.player);
         save(state);
@@ -254,9 +255,15 @@ $(document).ready(function() {
      * @param monsterID
      */
     function getMonster(monsterID){
-        for(i=0;i<state.monsters.length;i++){
-            if(state.monsters[i].name === monsterID){
-                return state.monsters[i];
+        if(state.boss){
+            if(state.boss.name === monsterID){
+                return state.boss;
+            }
+        } else {
+            for(i=0;i<state.monsters.length;i++){
+                if(state.monsters[i].name === monsterID){
+                    return state.monsters[i];
+                }
             }
         }
     }
@@ -279,6 +286,7 @@ $(document).ready(function() {
     function destroyMonster(monster){
         console.log('destroyMonster(monster)');
         $('.monster[data-monster="'+ monster.name +'"]').remove();
+        state.killCount = state.killCount+1;
     }
     /**
      * Update Player
@@ -318,11 +326,13 @@ $(document).ready(function() {
         console.log('destroyPlayer(player)');
         notif.err('You Died! 😢');
         //gameReset();
-        var player_lvl = (player.lvl>1)?(player.lvl-1):1;
+        var player_lvl = (player.lvl>2)?(player.lvl-1):1;
         state.player.lvl = player_lvl;
         state.player.xp = 0;
         state.player.health = state.player.maxHealth;
         state.level = 'stage1';
+        state.boss = null;
+        state.killCount = 0;
         state.monsters = buildMonsters(state.player);
         renderMonsters(state.monsters);
         updatePlayer(state.player);
@@ -372,8 +382,16 @@ $(document).ready(function() {
      */
     function levelComplete(){
         notif.ok('Level Complete! You found a new weapon! Check your inventory.');
-        state.monsters = buildMonsters(state.player);
-        renderMonsters(state.monsters);
+        if (state.killCount >= 25) {
+            state.monsters = [];
+            state.boss = buildBoss(state.player);
+            renderBoss(state.boss);
+            state.killCount = 0;
+        } else {
+            state.boss = null;
+            state.monsters = buildMonsters(state.player);
+            renderMonsters(state.monsters);
+        }
         state.player.maxHealth = state.player.maxHealth + 10;
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
@@ -432,7 +450,7 @@ $(document).ready(function() {
         for(i=0;i<monster_number;i++){
             var healthCalc = player.lvl * 100;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
-            var monster_dmg = randomIntFromInterval(player.maxHealth / 6,player.maxHealth / 4.1);
+            var monster_dmg = randomIntFromInterval(player.maxHealth / 8,player.maxHealth / 6);
             var monster_crit = randomIntFromInterval(monster_dmg * 1.25,monster_dmg * 1.75);
             var monster_armor = 10*Math.floor(Math.random()*11);
             var sprite_x = 64*Math.floor(Math.random()*16);
@@ -486,6 +504,69 @@ $(document).ready(function() {
                     '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
                     '</div>');
             }
+            battleground.append(frag.join(''));
+            battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
+        }
+    }
+    /**
+     * Build Boss
+     * @param player
+     */
+    function buildBoss(player){
+        console.log('buildBoss()');
+        var boss_number = 1;
+        var boss_lvl = player.lvl;
+        var healthCalc = player.lvl * 300;
+        var boss_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
+        var boss_dmg = randomIntFromInterval(player.maxHealth / 4,player.maxHealth / 3);
+        var boss_crit = randomIntFromInterval(boss_dmg * 1.25,boss_dmg * 1.75);
+        var boss_armor = 10*Math.floor(Math.random()*22);
+        var sprite_x = 64*Math.floor(Math.random()*16);
+        var sprite_y = 64*Math.floor(Math.random()*16);
+        var boss = {
+            lvl: boss_lvl,
+            boss: boss_lvl,
+            el: randomElemental(),
+            dmg: boss_dmg,
+            crit: boss_crit,
+            armor: boss_armor,
+            health: boss_health,
+            maxHealth: boss_health,
+            name: randomMonsterName(),
+            id: boss_number,
+            imgX: sprite_x,
+            imgY: sprite_y
+        };
+        return boss;
+    }
+    /**
+     * Render the boss in the battlefield
+     * @param boss
+     */
+    function renderBoss(boss){
+        console.log('renderBoss()');
+        var battleground = $('#battleground');
+        var frag = [];
+        if(battleground) {
+            battleground.empty();
+            frag.push('' +
+                '<div class="monster boss" data-boss="' + boss.name + '" data-monster="' + boss.name + '" data-element="' + boss.el + '">' +
+                '   <div class="monster-img" style="background-position:-' + boss.imgX + 'px -' + boss.imgY + 'px;"></div>' +
+                '   <div class="monster-details">' +
+                '       <span class="name">Boss:' + boss.name + '</span>' +
+                '       <div class="healthbar">' +
+                '       <span class="health-digit"><span>' + boss.maxHealth + '</span> ❤️</span>' +
+                '           <div class="inner-health"></div>' +
+                '       </div>' +
+                '       <div class="stats clearfix">' +
+                '           <span class="level">LVL: ' + boss.lvl + '</span>' +
+                '           <span class="dmg">dmg: <span>' + boss.dmg + '</span>️</span>' +
+                '           <span class="elemental">el: <span>' + boss.el + '</span>️</span>' +
+                '           <span class="armor">armor: <span>' + boss.armor + '</span>️</span>' +
+                '       </div>' +
+                '   </div>' +
+                '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                '</div>');
             battleground.append(frag.join(''));
             battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         }
