@@ -303,11 +303,24 @@ button:active {
     font-size: 12px;
     vertical-align: top;
 }
+#character #weapon .inner {
+    position: relative;
+}
 #character #weapon .inner img {
     display: inline-block;
     width: 32px;
     height: 32px;
     margin: 0 auto;
+    vertical-align: middle;
+}
+#character #weapon .inner img.weapon-element {
+    display: block;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 5px;
+    left: 5px;
+    margin: 0 5px 0 0;
     vertical-align: middle;
 }
 @media screen and (max-width: 600px) {
@@ -362,6 +375,8 @@ button:active {
     border-radius: 5px;
     background: none;
     overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
 }
 .monster:before {
     content: "";
@@ -571,6 +586,28 @@ button:active {
     .monster .stats {
         font-size: 12px;
         line-height: 14px;
+    }
+}
+/*--- Boss ---*/
+.monster.boss {
+    display: block;
+    float: none;
+    margin: 100px auto 0 auto;
+    transform: scale(1.75);
+}
+@media screen and (max-width: 600px) {
+    .monster.boss {
+        transform: scale(1.5);
+    }
+}
+@media screen and (max-width: 500px) {
+    .monster.boss {
+        transform: scale(1.25);
+    }
+}
+@media screen and (max-width: 400px) {
+    .monster.boss {
+        transform: scale(1);
     }
 }
 /*--- Inventory ---*/
