@@ -196,17 +196,27 @@ $(document).ready(function() {
         var playerDMG = player.weapon.dmg;
         var playerCrit = player.weapon.crit;
         var weaponEl = player.weapon.el;
+        var monsterShield = monster.shield;
         var monsterHealth = monster.health;
         var monsterDMG = monster.dmg;
         var monsterEl = monster.el;
         var critRollPlayer = rollDice(2);
         var critRollMonster = rollDice(2);
+        console.log(monster);
 
         if(critRollPlayer === 7){
             criticalHitMonster(monster);
-            monster.health = monsterHealth - playerCrit;
+            if(monster.shield > 0){
+                monster.shield = monsterShield - playerCrit;
+            } else {
+                monster.health = monsterHealth - playerCrit;
+            }
         } else {
-            monster.health = monsterHealth - playerDMG;
+            if(monster.shield > 0){
+                monster.shield = monsterShield - playerDMG;
+            } else {
+                monster.health = monsterHealth - playerDMG;
+            }
         }
         if (monster.health < 1) {
             grantXP(player, 125);
@@ -229,6 +239,7 @@ $(document).ready(function() {
         } else {
             updatePlayer(player);
         }
+        console.log(monster);
     }
     /**
      * Critical Hit Player
@@ -246,13 +257,23 @@ $(document).ready(function() {
      * Critical Hit Monster
      */
     function criticalHitMonster(monster) {
+        var shield = $('.monster[data-monster="'+ monster.name +'"]').find('.shield');
         var healthbar = $('.monster[data-monster="'+ monster.name +'"]').find('.healthbar');
-        healthbar.addClass('animated headShake');
-        healthbar.find('.inner-health').addClass('animated headShake');
-        setTimeout(function(){
-            healthbar.removeClass('animated headShake');
-            healthbar.find('.inner-health').removeClass('animated headShake');
-        }, 1000);
+        if(monster.shield > 0){
+            shield.addClass('animated headShake');
+            shield.find('.inner-shield').addClass('animated headShake');
+            setTimeout(function(){
+                shield.removeClass('animated headShake');
+                shield.find('.inner-shield').removeClass('animated headShake');
+            }, 1000);
+        } else {
+            healthbar.addClass('animated headShake');
+            healthbar.find('.inner-health').addClass('animated headShake');
+            setTimeout(function(){
+                healthbar.removeClass('animated headShake');
+                healthbar.find('.inner-health').removeClass('animated headShake');
+            }, 1000);
+        }
     }
     /**
      * Get Monster
@@ -277,6 +298,10 @@ $(document).ready(function() {
      */
     function updateMonster(monster){
         console.log('updateMonster(monster)');
+        // Update Shield
+        var shield = $('.monster[data-monster="'+ monster.name +'"]').find('.shield');
+        shield.find('.shield-digit > span').html(monster.shield);
+        shield.find('.inner-shield').width(monster.shield + '%');
         // Update Healthbar
         var healthbar = $('.monster[data-monster="'+ monster.name +'"]').find('.healthbar');
         healthbar.find('.health-digit > span').html(monster.health);
@@ -292,11 +317,11 @@ $(document).ready(function() {
         $('.monster[data-monster="'+ monster.name +'"]').remove();
         state.killCount = state.killCount+1;
         var multiple_potions = coinToss();
-        var potion_number = randomIntFromInterval(2,3);
+        var potion_number = randomIntFromInterval(3,4);
         if(multiple_potions) {
             grantPotions(state.player, potion_number);
         } else {
-            grantPotions(state.player, 1);
+            grantPotions(state.player, 2);
         }
         updatePlayer(state.player);
     }
@@ -470,17 +495,17 @@ $(document).ready(function() {
     function buildMonsters(player){
         console.log('buildMonsters()');
         var monsters = [];
-        var monster_number = randomIntFromInterval(3,10);
+        var monster_number = randomIntFromInterval(4,10);
         var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
-            var healthCalc = player.lvl * 45;
+            var healthCalc = player.lvl * 35;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
             if (monster_health < 100) {
                 monster_health = 100;
             }
             var monster_dmg = randomIntFromInterval(player.maxHealth / 8,player.maxHealth / 6);
             var monster_crit = randomIntFromInterval(monster_dmg * 1.25,monster_dmg * 1.75);
-            var monster_armor = 10*Math.floor(Math.random()*11);
+            var monster_shield = 10*Math.floor(Math.random()*11);
             var sprite_x = 64*Math.floor(Math.random()*16);
             var sprite_y = 64*Math.floor(Math.random()*16);
             var monster = {
@@ -488,7 +513,7 @@ $(document).ready(function() {
                 el: randomElemental(),
                 dmg: monster_dmg,
                 crit: monster_crit,
-                armor: monster_armor,
+                shield: monster_shield,
                 health: monster_health,
                 maxHealth: monster_health,
                 name: randomMonsterName(),
@@ -517,20 +542,26 @@ $(document).ready(function() {
                 frag.push('' +
                     '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
                     '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
-                    '   <div class="monster-details">' +
+                    '   <div class="monster-name">' +
                     '       <span class="name">' + monsters[i].name + '</span>' +
-                    '       <div class="healthbar">' +
-                    '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span> ❤️</span>' +
-                    '           <div class="inner-health"></div>' +
-                    '       </div>' +
-                    '       <div class="stats clearfix">' +
-                    '           <span class="level">LVL: ' + monsters[i].lvl + '</span>' +
-                    '           <span class="dmg">dmg: <span>' + monsters[i].dmg + '</span>️</span>' +
-                    '           <span class="elemental">el: <span>' + monsters[i].el + '</span>️</span>' +
-                    '           <span class="armor">armor: <span>' + monsters[i].armor + '</span>️</span>' +
-                    '       </div>' +
                     '   </div>' +
                     '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                    '   <div class="monster-details">' +
+                    '       <div class="stats clearfix">' +
+                    '           <span class="level">' + monsters[i].lvl + '</span>' +
+                    '           <span class="elemental" style="background-image:url(img/' + monsters[i].el + '.png);"><span>' + monsters[i].el + '</span>️</span>' +
+                    '           <span class="dmg"><span>' + monsters[i].dmg + '</span>️</span>' +
+                    //'           <span class="shield">shield: <span>' + monsters[i].shield + '</span>️</span>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '   <div class="shield">' +
+                    '       <span class="shield-digit"><span>' + monsters[i].shield + '</span></span>' +
+                    '       <div class="inner-shield" style="width:' + monsters[i].shield + '%"></div>' +
+                    '   </div>' +
+                    '   <div class="healthbar">' +
+                    '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span>️</span>' +
+                    '       <div class="inner-health"></div>' +
+                    '   </div>' +
                     '</div>');
             }
             battleground.append(frag.join(''));
@@ -552,7 +583,7 @@ $(document).ready(function() {
         }
         var boss_dmg = randomIntFromInterval(player.maxHealth / 4,player.maxHealth / 3);
         var boss_crit = randomIntFromInterval(boss_dmg * 1.25,boss_dmg * 1.75);
-        var boss_armor = 10*Math.floor(Math.random()*22);
+        var boss_shield = 10*Math.floor(Math.random()*22);
         var sprite_x = 64*Math.floor(Math.random()*16);
         var sprite_y = 64*Math.floor(Math.random()*16);
         var boss = {
@@ -561,7 +592,7 @@ $(document).ready(function() {
             el: randomElemental(),
             dmg: boss_dmg,
             crit: boss_crit,
-            armor: boss_armor,
+            shield: boss_shield,
             health: boss_health,
             maxHealth: boss_health,
             name: randomMonsterName(),
@@ -594,7 +625,7 @@ $(document).ready(function() {
                 '           <span class="level">LVL: ' + boss.lvl + '</span>' +
                 '           <span class="dmg">dmg: <span>' + boss.dmg + '</span>️</span>' +
                 '           <span class="elemental">el: <span>' + boss.el + '</span>️</span>' +
-                '           <span class="armor">armor: <span>' + boss.armor + '</span>️</span>' +
+                '           <span class="shield">shield: <span>' + boss.shield + '</span>️</span>' +
                 '       </div>' +
                 '   </div>' +
                 '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
@@ -643,10 +674,10 @@ $(document).ready(function() {
             holder.css('background-image', 'url(' + weapon.imgURL + ')');
             frag.push('' +
                 '<div class="stats">' +
-                '   <span class="element">el: ' + weapon.el + '</span>' +
-                '   <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
-                '   <span class="crit">crit: ' + weapon.crit + '</span>' +
-                '   <span class="special">sp: ' + weapon.special + '</span>' +
+                '   <span class="element">elm: <img src="img/' + weapon.el + '.png"><span class="equipped"><img src="img/' + state.player.weapon.el + '.png"></span></span>' +
+                '   <span class="dmg">dmg: ' + weapon.dmg + '<span class="equipped">' + state.player.weapon.dmg + '</span></span>' +
+                '   <span class="crit">crit: ' + weapon.crit + '<span class="equipped">' + state.player.weapon.crit + '</span></span>' +
+                '   <span class="special">sp: ' + weapon.special + '<span class="equipped">' + state.player.weapon.special + '</span></span>' +
                 '</div>' +
                 '<div class="actions">' +
                 '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button><br>' +

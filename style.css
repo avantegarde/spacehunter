@@ -125,7 +125,7 @@ button:active {
 /*--- Layout ---*/
 #game {
     display: block;
-    width: 600px;
+    width: 642px;
     height: 100%;
     max-height: 100%;
     max-width: 100%;
@@ -134,6 +134,11 @@ button:active {
     border: 1px solid #000000;
     position: relative;
     overflow: hidden;
+}
+@media screen and (min-width: 642px) {
+    #game {
+        width: 642px;
+    }
 }
 /*--- Notifications ---*/
 #notif {
@@ -349,15 +354,29 @@ button:active {
 .monster {
     display: block;
     position: relative;
-    width: 100%;
-    margin: 10px 0;
-    padding: 15px;
-    border: 1px solid transparent;
+    width: 300px;
+    height: 115px;
+    margin: 10px auto;
+    padding: 0;
     text-align: left;
     border-radius: 5px;
-    background: rgba(0,0,0,0.8);
+    background: none;
     overflow: hidden;
-    box-shadow: 0 1px 15px #000000;
+}
+.monster:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image:url(img/monster-bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    overflow: hidden;
+    z-index: 2;
 }
 .monster:after {
     content: "";
@@ -368,15 +387,17 @@ button:active {
     display: block;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
+    border-radius: 0;
     float: left;
-    margin-top: 10px;
+    margin: 15px 0 0 9px;
     background-image:url(img/monsters.png);
     background-repeat: no-repeat;
     background-position: -2px -2px;
     overflow: hidden;
+    position: relative;
+    z-index: 99;
 }
-.monster[data-element="fire"] {
+/*.monster[data-element="fire"] {
     border-color: #DA2F18;
     border-color: rgba(218, 47, 24, 0.5);
 }
@@ -391,50 +412,137 @@ button:active {
 .monster[data-element="electric"] {
     border-color: #F8CB05;
     border-color: rgba(248, 203, 5, 0.5);
+}*/
+.monster .monster-name {
+    display: block;
+    width: calc(100% - 73px);
+    height: 30px;
+    float: left;
+    padding: 7px 12px 0 30px;
+    font-size: 16px;
+    line-height: 20px;
+    text-transform: capitalize;
+    overflow: hidden;
+    position: relative;
+    color: #ffffff;
+    z-index: 99;
 }
 .monster .monster-details {
     display: block;
-    width: calc(100% - 125px);
-    padding: 0 15px;
+    width: 140px;
+    padding: 0 9px;
     float: left;
-    font-size: 20px;
-    line-height: 20px;
-}
-.monster .monster-details .name {
-    font-size: 18px;
-    line-height: 18px;
-}
-.monster .monster-details .healthbar {
-    margin-top: 5px;
-    text-align: center;
+    position: relative;
+    z-index: 99;
 }
 .monster .stats {
     display: block;
     margin: 0;
-    padding: 10px 0 0 0;
+    padding: 17px 0 0 8px;
     font-size: 14px;
     line-height: 16px;
 }
 .monster .stats > span {
     display: block;
-    width: 50%;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border-radius: 50%;
     float: left;
-    margin: 0;
+    margin: 0 3px;
     padding: 0;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 34px;
+    text-align: center;
+    color: #000000;
+}
+.monster .stats > .level {
+
+}
+.monster .stats > .elemental {
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.monster .stats > .elemental > span {
+    display: none;
+}
+.monster .stats > .dmg {
+    color: darkred;
+}
+.monster .shield {
+    display: block;
+    position: absolute;
+    bottom: 17px;
+    left: 10px;
+    width: 172px;
+    height: 4px;
+    float: left;
+    background: #000000;
+    overflow: hidden;
+    z-index: 1;
+}
+.monster .shield .inner-shield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: blue;
+}
+.monster .healthbar {
+    display: block;
+    position: absolute;
+    bottom: 7px;
+    left: 16px;
+    width: 167px;
+    height: 8px;
+    float: left;
+    background: darkred;
+    overflow: hidden;
+    z-index: 1;
+}
+.monster .healthbar .inner-health {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: green;
+}
+.monster .healthbar .health-digit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 20px;
+    z-index: 999;
 }
 .monster button.attack-monster {
     display: block;
-    width: 60px;
-    height: 60px;
-    margin: 14px 0 0 0;
+    width: 75px;
+    height: 75px;
+    margin: 3px 4px 0 0;
     padding: 0;
-    float: left;
-    background: none;
+    float: right;
+    background-color: transparent;
+    background-image:url(img/target.png);
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: center;
     border: none;
     outline: none !important;
+    position: relative;
+    z-index: 99;
 }
 .monster button.attack-monster i {
-    display: block;
+    display: none;
     width: 60px;
     height: 60px;
     margin: 0;
@@ -446,6 +554,14 @@ button:active {
     border-radius: 50%;
     background: transparent;
     color: #DA2F18;
+}
+@media screen and (min-width: 642px) {
+    .monster {
+        float: left;
+    }
+    .monster:nth-of-type(odd) {
+        margin-right: 10px;
+    }
 }
 @media screen and (max-width: 450px) {
     .monster .monster-details .name {
@@ -490,7 +606,7 @@ button:active {
 }
 #inventory #item-viewer .stats {
     display: block;
-    width: 100px;
+    width: 155px;
     float: left;
     margin: 0;
     padding: 10px;
@@ -498,6 +614,12 @@ button:active {
     font-size: 14px;
     line-height: 16px;
     color: #ffffff;
+}
+#inventory #item-viewer .stats .equipped {
+    display: inline-block;
+    margin-left: 15px;
+    color: yellow;
+    float: right;
 }
 #inventory #item-viewer .actions {
     display: block;
