@@ -69,7 +69,7 @@ $(document).ready(function() {
      */
     var SAVE_KEY = 'game_save';
     var state = load();
-    if (state && state.monsters && state.inventory && state.killCount) {
+    if (state && state.monsters && state.inventory) {
         state = state;
     } else {
         var state = {
@@ -417,7 +417,7 @@ $(document).ready(function() {
             state.monsters = buildMonsters(state.player);
             renderMonsters(state.monsters);
         }
-        state.player.maxHealth = state.player.maxHealth + 10;
+        state.player.maxHealth = state.player.maxHealth + 15;
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
         //generate weapon
@@ -473,7 +473,7 @@ $(document).ready(function() {
         var monster_number = randomIntFromInterval(3,10);
         var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
-            var healthCalc = player.lvl * 50;
+            var healthCalc = player.lvl * 45;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
             if (monster_health < 100) {
                 monster_health = 100;
@@ -545,7 +545,7 @@ $(document).ready(function() {
         console.log('buildBoss()');
         var boss_number = 1;
         var boss_lvl = player.lvl;
-        var healthCalc = player.lvl * 100;
+        var healthCalc = player.lvl * 90;
         var boss_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
         if (boss_health < 200) {
             boss_health = 200;
