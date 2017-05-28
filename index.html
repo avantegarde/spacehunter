@@ -396,7 +396,7 @@ $(document).ready(function() {
         console.log('updatePlayerWeapon(player)');
         var weaponHolder = $('#character #weapon .weapon-holder');
         weaponHolder.empty();
-        weaponHolder.html('<img src="'+ player.weapon.imgURL +'">');
+        weaponHolder.html('<img class="weapon-element" src="img/'+ player.weapon.el +'.png"><img src="'+ player.weapon.imgURL +'">');
         // Close Inventory
         var inventory = $('#inventory');
         if(inventory.hasClass('active')){
@@ -482,6 +482,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner">' +
+                '       <img class="weapon-element" src="img/'+ player.weapon.el +'.png">' +
                 '       <img src="'+ player.weapon.imgURL +'">' +
                 '   </span>' +
                 '</div>');
@@ -615,20 +616,26 @@ $(document).ready(function() {
             frag.push('' +
                 '<div class="monster boss" data-boss="' + boss.name + '" data-monster="' + boss.name + '" data-element="' + boss.el + '">' +
                 '   <div class="monster-img" style="background-position:-' + boss.imgX + 'px -' + boss.imgY + 'px;"></div>' +
-                '   <div class="monster-details">' +
-                '       <span class="name">Boss:' + boss.name + '</span>' +
-                '       <div class="healthbar">' +
-                '       <span class="health-digit"><span>' + boss.maxHealth + '</span> ❤️</span>' +
-                '           <div class="inner-health"></div>' +
-                '       </div>' +
-                '       <div class="stats clearfix">' +
-                '           <span class="level">LVL: ' + boss.lvl + '</span>' +
-                '           <span class="dmg">dmg: <span>' + boss.dmg + '</span>️</span>' +
-                '           <span class="elemental">el: <span>' + boss.el + '</span>️</span>' +
-                '           <span class="shield">shield: <span>' + boss.shield + '</span>️</span>' +
-                '       </div>' +
+                '   <div class="monster-name">' +
+                '       <span class="name">' + boss.name + '</span>' +
                 '   </div>' +
                 '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                '   <div class="monster-details">' +
+                '       <div class="stats clearfix">' +
+                '           <span class="level">' + boss.lvl + '</span>' +
+                '           <span class="elemental" style="background-image:url(img/' + boss.el + '.png);"><span>' + boss.el + '</span>️</span>' +
+                '           <span class="dmg"><span>' + boss.dmg + '</span>️</span>' +
+                //'           <span class="shield">shield: <span>' + boss.shield + '</span>️</span>' +
+                '       </div>' +
+                '   </div>' +
+                '   <div class="shield">' +
+                '       <span class="shield-digit"><span>' + boss.shield + '</span></span>' +
+                '       <div class="inner-shield" style="width:' + boss.shield + '%"></div>' +
+                '   </div>' +
+                '   <div class="healthbar">' +
+                '       <span class="health-digit"><span>' + boss.maxHealth + '</span>️</span>' +
+                '       <div class="inner-health"></div>' +
+                '   </div>' +
                 '</div>');
             battleground.append(frag.join(''));
             battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
@@ -674,10 +681,10 @@ $(document).ready(function() {
             holder.css('background-image', 'url(' + weapon.imgURL + ')');
             frag.push('' +
                 '<div class="stats">' +
-                '   <span class="element">elm: <img src="img/' + weapon.el + '.png"><span class="equipped"><img src="img/' + state.player.weapon.el + '.png"></span></span>' +
-                '   <span class="dmg">dmg: ' + weapon.dmg + '<span class="equipped">' + state.player.weapon.dmg + '</span></span>' +
-                '   <span class="crit">crit: ' + weapon.crit + '<span class="equipped">' + state.player.weapon.crit + '</span></span>' +
-                '   <span class="special">sp: ' + weapon.special + '<span class="equipped">' + state.player.weapon.special + '</span></span>' +
+                '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"><span class="equipped"><img src="img/' + weapon.el + '.png"></span></span>' +
+                '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '<span class="equipped">' + weapon.dmg + '</span></span>' +
+                '   <span class="crit">crit: ' + state.player.weapon.crit + '<span class="equipped">' + weapon.crit + '</span></span>' +
+                '   <span class="special">sp: ' + state.player.weapon.special + '<span class="equipped">' + weapon.special + '</span></span>' +
                 '</div>' +
                 '<div class="actions">' +
                 '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button><br>' +
