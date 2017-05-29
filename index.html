@@ -42,12 +42,30 @@ $(document).ready(function() {
      */
     function randomElemental() {
         var elements = [
+            'none',
             'water',
             'fire',
             'earth'
         ];
         var element = elements[Math.floor(Math.random() * elements.length)];
         return element;
+    }
+    /**
+     * Random Rarity
+     */
+    function randomRarity() {
+        var rares = [
+            'basic',
+            'rare'
+        ];
+        if (state.player.lvl > 24) {
+            rares.push('legendary');
+        }
+        if (state.player.lvl > 49) {
+            rares.push('exotic');
+        }
+        var rarity = rares[Math.floor(Math.random() * rares.length)];
+        return rarity;
     }
     /**
      * Random Monster Name
@@ -84,20 +102,22 @@ $(document).ready(function() {
                     id: '001',
                     name: 'sword',
                     dmg: 25,
-                    el: 'water',
+                    el: 'none',
                     crit: 25 * 2,
                     special: 25 + (25 / 2),
-                    imgURL: 'img/Sword1.png'
+                    imgURL: 'img/Sword1.png',
+                    rare: 'basic'
                 }
             },
             inventory:[{
                 id: '001',
                 name: 'sword',
                 dmg: 25,
-                el: 'water',
+                el: 'none',
                 crit: 25 * 2,
                 special: 25 + (25 / 2),
-                imgURL: 'img/Sword1.png'
+                imgURL: 'img/Sword1.png',
+                rare: 'basic'
             }],
             level: 'stage1',
             killCount: 0
@@ -203,6 +223,27 @@ $(document).ready(function() {
         var critRollPlayer = rollDice(2);
         var critRollMonster = rollDice(2);
         console.log(monster);
+        /**
+         *  same element damage 90%
+         *  water > fire
+         *  fire > earth
+         *  earth > water
+         */
+        if(weaponEl === monsterEl) {
+            playerDMG = playerDMG * 0.9;
+        } else if(weaponEl === 'water' && monsterEl === 'fire') {
+            playerDMG = playerDMG * 1.5;
+        } else if(weaponEl === 'water' && monsterEl === 'earth') {
+            playerDMG = playerDMG * 0.75;
+        } else if(weaponEl === 'fire' && monsterEl === 'earth') {
+            playerDMG = playerDMG * 1.5;
+        } else if(weaponEl === 'fire' && monsterEl === 'water') {
+            playerDMG = playerDMG * 0.75;
+        } else if(weaponEl === 'earth' && monsterEl === 'water') {
+            playerDMG = playerDMG * 1.5;
+        } else if(weaponEl === 'earth' && monsterEl === 'fire') {
+            playerDMG = playerDMG * 0.75;
+        }
 
         if(critRollPlayer === 7){
             criticalHitMonster(monster);
@@ -480,7 +521,7 @@ $(document).ready(function() {
                 '   <div id="potion" class="player-potion">' +
                 '   <span class="inner">🍕 <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
-                '<div id="weapon" class="player-attack">' +
+                '<div id="weapon" class="player-attack" data-rare="'+ player.weapon.rare +'">' +
                 '   <span class="weapon-holder inner">' +
                 '       <img class="weapon-element" src="img/'+ player.weapon.el +'.png">' +
                 '       <img src="'+ player.weapon.imgURL +'">' +
@@ -656,7 +697,7 @@ $(document).ready(function() {
             frag.push('<div class="inventory-grid clearfix">');
             for (i=0;i < inventory.length; i++) {
                 frag.push('' +
-                    '<div class="item" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '">' +
+                    '<div class="item" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '" data-rare="' + inventory[i].rare + '">' +
                     '   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
                     '</div>');
             }
@@ -717,7 +758,8 @@ $(document).ready(function() {
             el: randomElemental(),
             crit: weapon_crit,
             special: weapon_dmg + weapon_crit,
-            imgURL: weapon_img
+            imgURL: weapon_img,
+            rare: randomRarity()
         };
         return weapon;
     }

@@ -306,6 +306,18 @@ button:active {
 #character #weapon .inner {
     position: relative;
 }
+#character #weapon[data-rare="basic"] .inner {
+    background: #2f6b3c;
+}
+#character #weapon[data-rare="rare"] .inner {
+    background: #557f9e;
+}
+#character #weapon[data-rare="legendary"] .inner {
+    background: #4e3263;
+}
+#character #weapon[data-rare="exotic"] .inner {
+    background: #ceae32;
+}
 #character #weapon .inner img {
     display: inline-block;
     width: 32px;
@@ -412,22 +424,6 @@ button:active {
     position: relative;
     z-index: 99;
 }
-/*.monster[data-element="fire"] {
-    border-color: #DA2F18;
-    border-color: rgba(218, 47, 24, 0.5);
-}
-.monster[data-element="water"] {
-    border-color: #1C50BE;
-    border-color: rgba(28, 80, 190, 0.5);
-}
-.monster[data-element="earth"] {
-    border-color: #2CAF34;
-    border-color: rgba(44, 175, 52, 0.5);
-}
-.monster[data-element="electric"] {
-    border-color: #F8CB05;
-    border-color: rgba(248, 203, 5, 0.5);
-}*/
 .monster .monster-name {
     display: block;
     width: calc(100% - 73px);
@@ -698,8 +694,21 @@ button:active {
     margin: 5px;
     padding: 5px;
     border: 1px solid #cccccc;
-    background: #000000;
+    box-shadow: inset 0 0 0 1px #ffffff;
+    background: whitesmoke;
     overflow: hidden;
+}
+#inventory .inventory-grid .item[data-rare="basic"] {
+    background: #2f6b3c;
+}
+#inventory .inventory-grid .item[data-rare="rare"] {
+    background: #557f9e;
+}
+#inventory .inventory-grid .item[data-rare="legendary"] {
+    background: #4e3263;
+}
+#inventory .inventory-grid .item[data-rare="exotic"] {
+    background: #ceae32;
 }
 #inventory .inventory-grid .item.active {
     border-color: yellow;
