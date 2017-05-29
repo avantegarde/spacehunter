@@ -14,6 +14,7 @@
     <!-- Header -->
     <div id="header" class="clearfix">
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
+        <span class="toggle-fullscreen">⤢</span>
         <span id="level">Lvl: <span></span></span>
         <span id="xp">XP: <span></span></span>
         <!-- <span id="units">units: 0</span> -->
@@ -83,6 +84,18 @@ $(document).ready(function() {
         return list[i];
     }
     /**
+     * UUID generator
+     */
+    function generateUUID() {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/16);
+            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    }
+    /**
      * Global Variables
      */
     var SAVE_KEY = 'game_save';
@@ -125,8 +138,6 @@ $(document).ready(function() {
         state.monsters = buildMonsters(state.player);
         save(state);
     }
-    console.log(state);
-    //var monsters = state.monsters;
     /**
      * Initial Load / Save
      */
@@ -155,9 +166,12 @@ $(document).ready(function() {
      * Game Reset
      */
     function gameReset() {
-        var state = '';
-        save(state);
-        window.location.reload(true);
+        var resetConfirm = confirm("This will wipe your character and start fresh. Only use this if you get stuck or if there is an update that requires it.");
+        if (resetConfirm == true) {
+            var state = '';
+            save(state);
+            window.location.reload(true);
+        }
     }
     /**
      * Game Reset
@@ -167,27 +181,26 @@ $(document).ready(function() {
     var notif = {
         ok: function(message){
             var holder = $('#notif');
-            holder.removeClass();
-            holder.addClass('ok');
-            displayNotification(message);
+            var notification = '<div class="message ok">'+ message +'</div>';
+            displayNotification(notification);
         },
         err: function(message){
             var holder = $('#notif');
-            holder.removeClass();
-            holder.addClass('err');
-            displayNotification(message);
+            var notification = '<div class="message err">'+ message +'</div>';
+            displayNotification(notification);
         }
     };
     function displayNotification(message) {
         var holder = $('#notif');
-        holder.empty();
         holder.append(message);
-        holder.addClass('active');
+        //holder.addClass('active');
+        holder.animate({ height: holder[0].scrollHeight}, 300);
         setTimeout(function(){
-            holder.removeClass('active');
+            //holder.removeClass('active');
+            holder.animate({ height: 0}, 300);
             setTimeout(function(){
                 holder.empty();
-            }, 3500);
+            }, 100);
         }, 3000);
     }
     /**
@@ -201,8 +214,11 @@ $(document).ready(function() {
         var number = n?n:1;
         var x = Math.floor(Math.random() * ((6-1)+1) + 1);
         var y = Math.floor(Math.random() * ((6-1)+1) + 1);
-        if(number === 2) {
-            var total = x + y;
+        var z = Math.floor(Math.random() * ((6-1)+1) + 1);
+        if(number === 3) {
+            var total = x + y + z;
+        } else if(number === 2) {
+            total = x + y;
         } else {
             total = x;
         }
@@ -222,7 +238,17 @@ $(document).ready(function() {
         var monsterEl = monster.el;
         var critRollPlayer = rollDice(2);
         var critRollMonster = rollDice(2);
-        console.log(monster);
+        var playerMiss = rollDice(3);
+        var monsterMiss = rollDice(3);
+        /**
+         * Miss Chance
+         */
+        if(playerMiss === 3) {
+            playerDMG = 0;
+        }
+        if(monsterMiss === 3) {
+            monsterDMG = 0;
+        }
         /**
          *  same element damage 90%
          *  water > fire
@@ -280,7 +306,6 @@ $(document).ready(function() {
         } else {
             updatePlayer(player);
         }
-        console.log(monster);
     }
     /**
      * Critical Hit Player
@@ -425,6 +450,9 @@ $(document).ready(function() {
         state.boss = null;
         state.killCount = 0;
         state.monsters = buildMonsters(state.player);
+        if(state.player.potionCount < 1){
+            grantPotions(state.player, 15);
+        }
         renderMonsters(state.monsters);
         updatePlayer(state.player);
         save(state);
@@ -565,7 +593,6 @@ $(document).ready(function() {
             };
             monsters.push(monster);
         }
-        //console.log(monsters)
         return monsters;
     }
     /**
@@ -698,6 +725,7 @@ $(document).ready(function() {
             for (i=0;i < inventory.length; i++) {
                 frag.push('' +
                     '<div class="item" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '" data-rare="' + inventory[i].rare + '">' +
+                    //'   <img class="elemental" src="img/' + inventory[i].el + '.png">' +
                     '   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
                     '</div>');
             }
@@ -719,16 +747,23 @@ $(document).ready(function() {
         }
         if(holder) {
             holder.empty();
+            holder.attr('data-rare', weapon.rare);
             holder.css('background-image', 'url(' + weapon.imgURL + ')');
             frag.push('' +
-                '<div class="stats">' +
-                '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"><span class="equipped"><img src="img/' + weapon.el + '.png"></span></span>' +
-                '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '<span class="equipped">' + weapon.dmg + '</span></span>' +
-                '   <span class="crit">crit: ' + state.player.weapon.crit + '<span class="equipped">' + weapon.crit + '</span></span>' +
-                '   <span class="special">sp: ' + state.player.weapon.special + '<span class="equipped">' + weapon.special + '</span></span>' +
+                '<div class="stats clearfix">' +
+                '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
+                '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
+                '   <span class="crit">crit: ' + state.player.weapon.crit + '</span>' +
+                '   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
+                '   <div class="equipped  clearfix">' +
+                '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
+                '       <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
+                '       <span class="crit">crit: ' + weapon.crit + '</span>' +
+                '       <span class="special">sp: ' + weapon.special + '</span>' +
+                '   </div>' +
                 '</div>' +
-                '<div class="actions">' +
-                '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button><br>' +
+                '<div class="actions clearfix">' +
+                '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button>' +
                 '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="gi gi-trash-can"></i></button>' +
                 '</div>');
             holder.append(frag.join(''));
@@ -746,8 +781,9 @@ $(document).ready(function() {
      */
     function generateWeapon(player){
         console.log('generateWeapon()');
-        var weapon_number = state.inventory.length + 1;
-        var weaponID = 'w' + weapon_number.toString();
+        //var weapon_number = state.inventory.length + 1;
+        //var weaponID = 'w' + weapon_number.toString();
+        var weaponID = generateUUID();
         var weapon_dmg = randomIntFromInterval(player.lvl*1.5+25,player.lvl*2+50);
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
         var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,19) +'.png';
@@ -788,14 +824,19 @@ $(document).ready(function() {
     /**
      * Actions / Buttons
      */
+    // fullscreen
+    $(document).on('click', '.toggle-fullscreen', function() {
+        var el = document.getElementById('game');
+        (el.requestFullscreen) && el.requestFullscreen();
+        (el.webkitRequestFullscreen) && el.webkitRequestFullscreen();
+        (el.mozRequestFullScreen) && el.mozRequestFullScreen();
+        (el.msRequestFullscreen) && el.msRequestFullscreen();
+    });
     // Player Attack
     $(document).on('click', '.player-attack', function() {
-        console.log(state.monsters);
         var player = state.player;
         var monsterID = $('#battleground > .monster:last-of-type').data('monster');
         var monster = getMonster(monsterID);
-        //var battleground = $('#battleground');
-        //battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         attack(player, monster);
     });
     // Player Potion
@@ -824,7 +865,6 @@ $(document).ready(function() {
         var player = state.player;
         var monsterID = current_monster.data('monster');
         var monster = getMonster(monsterID);
-        console.log(player);
         attack(player, monster);
     });
     // Open Inventory
