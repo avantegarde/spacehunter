@@ -193,8 +193,10 @@ button:active {
 }
 #header .toggle-inventory {
     display: block;
-    float: left;
     cursor: pointer;
+    position: absolute;
+    top: 15px;
+    left: 15px;
 }
 #header .toggle-inventory i {
     font-size: 30px;
@@ -202,20 +204,31 @@ button:active {
 }
 #header .toggle-fullscreen {
     display: block;
-    width: 30px;
-    height: 30px;
-    margin: 0 0 0 30px;
-    padding: 0;
-    float: left;
     cursor: pointer;
-    font-size: 26px;
-    line-height: 24px;
-    text-align: center;
+    position: absolute;
+    top: 15px;
+    left: 75px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+#header .toggle-fullscreen i {
+    font-size: 30px;
+    line-height: 30px;
 }
 #game-reset {
     position: absolute;
     top: 15px;
     right: 15px;
+}
+@media screen and (max-width: 400px) {
+    #header .toggle-inventory i,
+    #header .toggle-fullscreen i {
+        font-size: 24px;
+    }
+    #header .toggle-fullscreen {
+        left: 55px;
+    }
 }
 #battleground {
     display: block;
