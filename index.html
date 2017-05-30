@@ -720,6 +720,7 @@ $(document).ready(function() {
         var frag = [];
         if(holder) {
             holder.empty();
+            frag.push('<span class="toggle-inventory">x</span>');
             frag.push('<div id="item-viewer" class="clearfix"></div>');
             frag.push('<div class="inventory-grid clearfix">');
             for (i=0;i < inventory.length; i++) {
@@ -786,12 +787,20 @@ $(document).ready(function() {
         var weaponID = generateUUID();
         var weapon_dmg = randomIntFromInterval(player.lvl*1.5+25,player.lvl*2+50);
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
-        var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,19) +'.png';
+        var weapon_el = randomElemental();
+        var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,40) +'.png';
+        if(weapon_el === 'water'){
+            weapon_img = 'img/pistol_'+ randomIntFromInterval(1,10) +'.png';
+        } else if(weapon_el === 'fire'){
+            weapon_img = 'img/pistol_'+ randomIntFromInterval(11,20) +'.png';
+        } else if(weapon_el === 'earth'){
+            weapon_img = 'img/pistol_'+ randomIntFromInterval(21,30) +'.png';
+        }
         var weapon = {
             id: weaponID,
             name: randomMonsterName(),
             dmg: weapon_dmg,
-            el: randomElemental(),
+            el: weapon_el,
             crit: weapon_crit,
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,

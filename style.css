@@ -655,6 +655,21 @@ button:active {
 #inventory.active {
     top: 65px;
 }
+#inventory > .toggle-inventory {
+    position: absolute;
+    display: block;
+    width: 25px;
+    height: 25px;
+    right: 0px;
+    bottom: 0px;
+    background: rgba(255,255,255,0.1);
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+    cursor: pointer;
+}
 #inventory #item-viewer {
     display: block;
     position: relative;
@@ -664,8 +679,8 @@ button:active {
     padding: 0;
     border-bottom: 1px solid #222;
     background-repeat: no-repeat;
-    background-size: auto 75px;
-    background-position: center 60px;
+    background-size: auto 64px;
+    background-position: center 64px;
 }
 #inventory #item-viewer[data-rare="basic"] {
     background-color: #2f6b3c;
@@ -721,10 +736,10 @@ button:active {
     margin: 0;
 }
 #inventory #item-viewer .actions button.equip {
-    float: left;
+    float: right;
 }
 #inventory #item-viewer .actions button.delete {
-    float: right;
+    float: left;
 }
 #inventory .inventory-grid {
     display: block;
