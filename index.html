@@ -4,6 +4,8 @@
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
     <title>SpaceHunter</title>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link type="image/x-icon" rel="shortcut icon" href="apple-touch-icon.png"/>
     <link rel="stylesheet" href="game-icons.min.css" type="text/css" media="all" />
     <link rel="stylesheet" href="style.css" type="text/css" media="all" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -389,6 +391,9 @@ $(document).ready(function() {
         } else {
             grantPotions(state.player, 2);
         }
+        if(monster.boss){
+            grantWeapon(true);
+        }
         updatePlayer(state.player);
     }
     /**
@@ -410,6 +415,8 @@ $(document).ready(function() {
         // Update PotionCount
         var potions = $('#character #potion');
         potions.find('span.potion-count').html(player.potionCount);
+        //save
+        save(state);
     }
     /**
      * Grant XP
@@ -423,6 +430,23 @@ $(document).ready(function() {
             player.lvl = player.lvl + lvlInc;
             player.xp = player.xp - (lvlInc * 1000);
         }
+    }
+    /**
+     * Grant Weapon
+     * @param upgrade
+     */
+    function grantWeapon(upgrade) {
+        if(upgrade === true){
+            var weapon = generateWeapon(state.player, true);
+        } else {
+            var weapon = generateWeapon(state.player);
+        }
+        if(state.inventory.length > 60) {
+            notif.err('You have too many items. please remove some before completing the next level.');
+        } else {
+            state.inventory.push(weapon);
+        }
+        renderInventory(state.inventory);
     }
     /**
      * Grant potions
@@ -465,6 +489,7 @@ $(document).ready(function() {
         console.log('updatePlayerWeapon(player)');
         var weaponHolder = $('#character #weapon .weapon-holder');
         weaponHolder.empty();
+        weaponHolder.attr('data-rare', player.weapon.rare);
         weaponHolder.html('<img class="weapon-element" src="img/'+ player.weapon.el +'.png"><img src="'+ player.weapon.imgURL +'">');
         // Close Inventory
         var inventory = $('#inventory');
@@ -515,13 +540,7 @@ $(document).ready(function() {
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
         //generate weapon
-        var weapon = generateWeapon(state.player);
-        if(state.inventory.length > 60) {
-            notif.err('You have too many items. please remove some before completing the next level.');
-        } else {
-            state.inventory.push(weapon);
-        }
-        renderInventory(state.inventory);
+        grantWeapon();
         //save
         save(state);
     }
@@ -549,8 +568,8 @@ $(document).ready(function() {
                 '   <div id="potion" class="player-potion">' +
                 '   <span class="inner">🍕 <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
-                '<div id="weapon" class="player-attack" data-rare="'+ player.weapon.rare +'">' +
-                '   <span class="weapon-holder inner">' +
+                '<div id="weapon" class="player-attack">' +
+                '   <span class="weapon-holder inner" data-rare="'+ player.weapon.rare +'">' +
                 '       <img class="weapon-element" src="img/'+ player.weapon.el +'.png">' +
                 '       <img src="'+ player.weapon.imgURL +'">' +
                 '   </span>' +
@@ -608,32 +627,38 @@ $(document).ready(function() {
             battleground.empty();
             //for (var i = monsters.length - 1; i >= 0; --i) {
             for (i=0;i < monsters.length; i++) {
-                frag.push('' +
-                    '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
-                    '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
-                    '   <div class="monster-name">' +
-                    '       <span class="name">' + monsters[i].name + '</span>' +
-                    '   </div>' +
-                    '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
-                    '   <div class="monster-details">' +
-                    '       <div class="stats clearfix">' +
-                    '           <span class="level">' + monsters[i].lvl + '</span>' +
-                    '           <span class="elemental" style="background-image:url(img/' + monsters[i].el + '.png);"><span>' + monsters[i].el + '</span>️</span>' +
-                    '           <span class="dmg"><span>' + monsters[i].dmg + '</span>️</span>' +
-                    //'           <span class="shield">shield: <span>' + monsters[i].shield + '</span>️</span>' +
-                    '       </div>' +
-                    '   </div>' +
-                    '   <div class="shield">' +
-                    '       <span class="shield-digit"><span>' + monsters[i].shield + '</span></span>' +
-                    '       <div class="inner-shield" style="width:' + monsters[i].shield + '%"></div>' +
-                    '   </div>' +
-                    '   <div class="healthbar">' +
-                    '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span>️</span>' +
-                    '       <div class="inner-health"></div>' +
-                    '   </div>' +
-                    '</div>');
+                console.log(monsters[i]);
+                if(monsters[i].health > 0) {
+                    frag.push('' +
+                        '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
+                        '   <div class="monster-img" style="background-position:-' + monsters[i].imgX + 'px -' + monsters[i].imgY + 'px;"></div>' +
+                        '   <div class="monster-name">' +
+                        '       <span class="name">' + monsters[i].name + '</span>' +
+                        '   </div>' +
+                        '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                        '   <div class="monster-details">' +
+                        '       <div class="stats clearfix">' +
+                        '           <span class="level">' + monsters[i].lvl + '</span>' +
+                        '           <span class="elemental" style="background-image:url(img/' + monsters[i].el + '.png);"><span>' + monsters[i].el + '</span>️</span>' +
+                        '           <span class="dmg"><span>' + monsters[i].dmg + '</span>️</span>' +
+                        //'           <span class="shield">shield: <span>' + monsters[i].shield + '</span>️</span>' +
+                        '       </div>' +
+                        '   </div>' +
+                        '   <div class="shield">' +
+                        '       <span class="shield-digit"><span>' + monsters[i].shield + '</span></span>' +
+                        '       <div class="inner-shield" style="width:' + monsters[i].shield + '%"></div>' +
+                        '   </div>' +
+                        '   <div class="healthbar">' +
+                        '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span>️</span>' +
+                        '       <div class="inner-health"></div>' +
+                        '   </div>' +
+                        '</div>');
+                }
             }
             battleground.append(frag.join(''));
+            for (i=0;i < monsters.length; i++) {
+                updateMonster(monsters[i]);
+            }
             battleground.animate({ scrollTop: battleground[0].scrollHeight}, 1000);
         }
     }
@@ -780,12 +805,18 @@ $(document).ready(function() {
      * Generate Weapon
      * @param player
      */
-    function generateWeapon(player){
+    function generateWeapon(player, upgrade){
         console.log('generateWeapon()');
         //var weapon_number = state.inventory.length + 1;
         //var weaponID = 'w' + weapon_number.toString();
         var weaponID = generateUUID();
         var weapon_dmg = randomIntFromInterval(player.lvl*2+40,player.lvl*2.3+50);
+        if(upgrade === true){
+            var highestDMG = getHighWeapon();
+            weapon_dmg = randomIntFromInterval(highestDMG + 1,highestDMG + 10);
+            console.log(highestDMG);
+            console.log(weapon_dmg);
+        }
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
         var weapon_el = randomElemental();
         var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,40) +'.png';
@@ -810,6 +841,17 @@ $(document).ready(function() {
     }
     /**
      * Get Weapon
+     * @param itemID
+     */
+    function getHighWeapon(){
+        var damages = [];
+        for(i=0;i<state.inventory.length;i++){
+            damages.push(state.inventory[i].dmg)
+        }
+        return Math.max.apply(null, damages);
+    }
+    /**
+     * Get Highest Weapon Damage from inventory
      * @param itemID
      */
     function getWeapon(weaponID){
