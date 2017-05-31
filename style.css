@@ -336,16 +336,16 @@ button:active {
 #character #weapon .inner {
     position: relative;
 }
-#character #weapon[data-rare="basic"] .inner {
+#character #weapon .inner[data-rare="basic"] {
     background: #2f6b3c;
 }
-#character #weapon[data-rare="rare"] .inner {
+#character #weapon .inner[data-rare="rare"] {
     background: #557f9e;
 }
-#character #weapon[data-rare="legendary"] .inner {
+#character #weapon .inner[data-rare="legendary"] {
     background: #4e3263;
 }
-#character #weapon[data-rare="exotic"] .inner {
+#character #weapon .inner[data-rare="exotic"] {
     background: #ceae32;
 }
 #character #weapon .inner img {
