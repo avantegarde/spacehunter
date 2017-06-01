@@ -593,7 +593,7 @@ $(document).ready(function() {
             if (monster_health < 100) {
                 monster_health = 100;
             }
-            var monster_dmg = randomIntFromInterval(player.maxHealth / 8,player.maxHealth / 6);
+            var monster_dmg = randomIntFromInterval(player.maxHealth / 10,player.maxHealth / 6);
             var monster_crit = randomIntFromInterval(monster_dmg * 1.25,monster_dmg * 1.75);
             var monster_shield = 10*Math.floor(Math.random()*11);
             var sprite_x = 64*Math.floor(Math.random()*16);
@@ -676,7 +676,7 @@ $(document).ready(function() {
         if (boss_health < 200) {
             boss_health = 200;
         }
-        var boss_dmg = randomIntFromInterval(player.maxHealth / 4,player.maxHealth / 3);
+        var boss_dmg = randomIntFromInterval(player.maxHealth / 6,player.maxHealth / 4);
         var boss_crit = randomIntFromInterval(boss_dmg * 1.25,boss_dmg * 1.75);
         var boss_shield = 10*Math.floor(Math.random()*22);
         var sprite_x = 64*Math.floor(Math.random()*16);
