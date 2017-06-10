@@ -467,15 +467,15 @@ $(document).ready(function() {
         console.log('destroyPlayer(player)');
         notif.err('You Died! 😢');
         //gameReset();
-        var player_lvl = (player.lvl>2)?(player.lvl-1):1;
-        state.player.lvl = player_lvl;
+        //var player_lvl = (player.lvl>2)?(player.lvl-1):1;
+        //state.player.lvl = player_lvl;
         state.player.xp = 0;
         state.player.health = state.player.maxHealth;
         state.level = 'stage1';
         state.boss = null;
         state.killCount = 0;
         state.monsters = buildMonsters(state.player);
-        if(state.player.potionCount < 1){
+        if(state.player.potionCount < 5){
             grantPotions(state.player, 15);
         }
         renderMonsters(state.monsters);
