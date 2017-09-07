@@ -17,9 +17,9 @@
     <div id="header" class="clearfix">
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
         <span class="toggle-fullscreen"><i class="gi gi-expand"></i></span>
-        <span id="level">Lvl: <span></span></span>
-        <span id="xp">XP: <span></span></span>
-        <!-- <span id="units">units: 0</span> -->
+        <span id="level">Lvl: <span></span></span> |
+        <span id="xp">XP: <span></span></span> |
+        <span id="units">units: <span></span></span> |
         <span id="game-reset">🗑️</span>
     </div>
     <!-- Battleground -->
@@ -289,6 +289,7 @@ $(document).ready(function() {
         }
         if (monster.health < 1) {
             grantXP(player, 125);
+            grantUnits(player, 10);
             destroyMonster(monster);
             var monsterCount = $('#battleground').find('.monster').length;
             if(monsterCount <= 0) {
@@ -406,8 +407,10 @@ $(document).ready(function() {
         // Update Header Info
         var lvl = $('#header #level > span');
         var xp = $('#header #xp > span');
+        var units = $('#header #units > span');
         lvl.html(player.lvl);
         xp.html(player.xp);
+        units.html(player.units);
         // Update Healthbar
         var healthbar = $('#character .healthbar');
         healthbar.find('.health-digit > span').html(player.health);
@@ -431,6 +434,14 @@ $(document).ready(function() {
             player.lvl = player.lvl + lvlInc;
             player.xp = player.xp - (lvlInc * 1000);
         }
+    }
+    /**
+     * Grant Units
+     * @param int
+     */
+    function grantUnits(player, units){
+        console.log('grantUnits(player, int)');
+        player.units = player.units + units;
     }
     /**
      * Grant Weapon
@@ -542,6 +553,8 @@ $(document).ready(function() {
         updatePlayer(state.player);
         //generate weapon
         grantWeapon();
+        //give units
+        grantUnits(player, 25);
         //save
         save(state);
     }
@@ -586,8 +599,8 @@ $(document).ready(function() {
         console.log('buildMonsters()');
         var monsters = [];
         var monster_number = randomIntFromInterval(4,10);
-        var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
+            var monster_lvl = player.lvl - 1 + randomIntFromInterval(1,3);
             var healthCalc = player.lvl * 35;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
             if (monster_health < 100) {
