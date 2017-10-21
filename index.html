@@ -15,8 +15,8 @@
     <div id="notif"></div>
     <!-- Header -->
     <div id="header" class="clearfix">
-        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
+        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
         <span class="toggle-fullscreen"><i class="gi gi-expand"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
@@ -100,6 +100,33 @@ $(document).ready(function() {
         });
         return uuid;
     }
+    // Set Cookie
+    function setCookie(cname, cvalue, exdays, path) {
+        var d = new Date();
+        if (path){
+            var path = path;
+        } else {
+            var path = "";
+        }
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/" + path;
+    }
+    // Get Cookie
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
     /**
      * Global Variables
      */
@@ -141,9 +168,19 @@ $(document).ready(function() {
             killCount: 0
         };
         state.monsters = buildMonsters(state.player);
-        state.shop = buildShop(state);
         save(state);
-        console.log(state);
+    }
+    if (state.shop) {
+        var shopRefresh = getCookie('shopRefresh');
+        if (shopRefresh != "") {
+            return false; // Don't refresh the shop
+        } else {
+            // Refresh the shop
+            state.shop = buildShop(state);
+            setCookie('shopRefresh', 'value', 3, '');
+        }
+    } else {
+        state.shop = buildShop(state);
     }
     /**
      * Initial Load / Save
@@ -832,21 +869,24 @@ $(document).ready(function() {
             {
                 name: 'Small Health',
                 type: 'healing',
+                size: 'small',
                 amount: 25,
                 price: 100
-            },
-            {
+            }
+            /*{
                 name: 'Medium Health',
                 type: 'healing',
+                size: 'medium',
                 amount: 50,
                 price: 200
             },
             {
                 name: 'Large Health',
                 type: 'healing',
+                size: 'large',
                 amount: 100,
                 price: 300
-            }
+            }*/
         ];
         var weapons = [
             generateWeapon(state.player, false, 100),
@@ -883,17 +923,20 @@ $(document).ready(function() {
     function renderShopPotions(){
         console.log('renderShopPotions()');
         var holder = $('#shop-potions');
+        var potionVal = Math.floor(state.player.maxHealth / 4.33);
         var frag = [];
         if(holder) {
             holder.empty();
             frag.push('<div class="item-grid potion-grid">');
             for (i=0;i < state.shop.potions.length; i++) {
                 frag.push('' +
-                    '<div class="item" data-item="' + state.shop.potions[i].name + '">' +
-                    '   <i class="gi gi-standing-potion"></i><br>' +
-                    '   <p>'+ state.shop.potions[i].name +'</p>' +
-                    '   <span id="price">' + state.shop.potions[i].price + '</span>' +
-                    //'   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
+                    '<div class="shop-item">' +
+                    '   <span class="price">$' + state.shop.potions[i].price + '</span>' +
+                    '   <div class="item" data-item="' + state.shop.potions[i].name + '" data-size="' + state.shop.potions[i].size + '">' +
+                    '       <i class="gi gi-standing-potion"></i>' +
+                    '   </div>' +
+                    //'   <span class="amount">+'+ potionVal +'</span>' +
+                    '   <button class="purchase" data-item-id="' + i + '" data-type="potion">Buy</button>' +
                     '</div>');
             }
             frag.push('</div>');
@@ -914,15 +957,58 @@ $(document).ready(function() {
             frag.push('<div class="item-grid weapon-grid">');
             for (i=0;i < state.shop.weapons.length; i++) {
                 frag.push('' +
-                    '<div class="item" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
-                    '   <div class="item-img" style="background-image:url(' + state.shop.weapons[i].imgURL + ');"></div>' +
-                    '   <span id="price">' + state.shop.weapons[i].price + '</span>' +
+                    '<div class="shop-item" data-price="' + state.shop.weapons[i].price + '">' +
+                    '   <span class="price">$' + state.shop.weapons[i].price + '</span>' +
+                    '   <div class="item" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
+                    '       <div class="item-img" style="background-image:url(' + state.shop.weapons[i].imgURL + ');"></div>' +
+                    '   </div>' +
+                    '   <div class="stats clearfix">' +
+                    '       <span class="element"><img src="img/' + state.shop.weapons[i].el + '.png"></span>' +
+                    '       <span class="dmg">' + state.shop.weapons[i].dmg + '</span>' +
+                    '       <span class="crit">' + state.shop.weapons[i].crit + '</span>' +
+                    '       <span class="special">' + state.shop.weapons[i].special + '</span>' +
+                    '   </div>' +
+                    '   <button class="purchase" data-item-id="' + i + '" data-type="weapon">Buy</button>' +
                     '</div>');
+            }
+            if (state.shop.weapons.length < 1) {
+                frag.push('<p class="noitems">No more weapons for sale. <br>Check back in a couple days!</p>');
             }
             frag.push('</div>');
             frag.push('</div>');
             holder.append(frag.join(''));
         }
+    }
+    /**
+     * Purchase Shop Item
+     * @param price
+     */
+    function purchaseItem(item, type){
+        console.log('purchaseItem(price)');
+        var playerUnits = state.player.units;
+        if(playerUnits < item.price) {
+            notif.err('You have insufficient credits for this purchase.');
+        } else {
+            if (type === 'weapon') {
+                if(state.inventory.length > 60) {
+                    notif.err('You have too many items. please remove some before purchasing.');
+                } else {
+                    state.inventory.push(item);
+                    state.shop.weapons.splice($.inArray(item, state.shop.weapons),1);
+                    renderShopWeapons();
+                }
+            } else if (type === 'potion') {
+                if (state.player.potionCount < 999) {
+                    state.player.potionCount = state.player.potionCount + 1;
+                } else {
+                    notif.err('You have the maximum allowed potions.');
+                }
+            }
+            state.player.units = state.player.units - item.price;
+        }
+        renderInventory(state.inventory);
+        updatePlayer(state.player);
+        save(state);
     }
     /**
      * Generate Weapon
@@ -994,23 +1080,47 @@ $(document).ready(function() {
     /**
      * Toggle Inventory
      */
-    function toggleInventory(){
+    function toggleInventory(visibility){
         var inventory = $('#inventory');
-        if(inventory.hasClass('active')){
-            inventory.removeClass('active');
+        if (visibility === 'show') {
+            if(!inventory.hasClass('active')){
+                inventory.addClass('active');
+                toggleShop('hide');
+            }
+        } else if (visibility === 'hide') {
+            if(inventory.hasClass('active')){
+                inventory.removeClass('active');
+            }
         } else {
-            inventory.addClass('active');
+            if(inventory.hasClass('active')){
+                inventory.removeClass('active');
+            } else {
+                inventory.addClass('active');
+                toggleShop('hide');
+            }
         }
     }
     /**
      * Toggle Shop
      */
-    function toggleShop(){
+    function toggleShop(visibility){
         var shop = $('#shop');
-        if(shop.hasClass('active')){
-            shop.removeClass('active');
+        if (visibility === 'show') {
+            if(!shop.hasClass('active')){
+                shop.addClass('active');
+                toggleInventory('hide');
+            }
+        } else if (visibility === 'hide') {
+            if(shop.hasClass('active')){
+                shop.removeClass('active');
+            }
         } else {
-            shop.addClass('active');
+            if(shop.hasClass('active')){
+                shop.removeClass('active');
+            } else {
+                shop.addClass('active');
+                toggleInventory('hide');
+            }
         }
     }
     /**
@@ -1089,6 +1199,17 @@ $(document).ready(function() {
     // Open Shop
     $(document).on('click', '.toggle-shop', function() {
         toggleShop();
+    });
+    // Purchase Item
+    $(document).on('click', '#shop button.purchase', function() {
+        var itemType = $(this).data('type');
+        var itemID = $(this).data('item-id');
+        if (itemType === 'potion') {
+            var item = state.shop.potions[itemID];
+        } else if (itemType === 'weapon') {
+            var item = state.shop.weapons[itemID];
+        }
+        purchaseItem(item, itemType);
     });
 
 

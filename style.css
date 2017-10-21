@@ -205,7 +205,13 @@ button:active {
     line-height: 30px;
 }
 #header .toggle-shop {
-    display: inline-block;
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    left: 65px;
+    margin: 0;
+    padding: 0;
     cursor: pointer;
 }
 #header .toggle-shop i {
@@ -216,8 +222,8 @@ button:active {
     display: block;
     cursor: pointer;
     position: absolute;
-    top: 15px;
-    left: 75px;
+    top: 18px;
+    right: 60px;
     margin: 0;
     padding: 0;
     cursor: pointer;
@@ -233,11 +239,15 @@ button:active {
 }
 @media screen and (max-width: 400px) {
     #header .toggle-inventory i,
-    #header .toggle-fullscreen i {
+    #header .toggle-fullscreen i,
+    #header .toggle-shop i {
         font-size: 24px;
     }
-    #header .toggle-fullscreen {
+    #header .toggle-shop {
         left: 55px;
+    }
+    #header .toggle-fullscreen {
+        right: 50px;
     }
 }
 #battleground {
@@ -859,7 +869,8 @@ button:active {
     display: block;
     position: relative;
     width: 100%;
-    height: 160px;
+    height: auto;
+    max-height: 50%;
     margin: 0 0 15px 0;
     padding: 0;
     border-bottom: 1px solid #222;
@@ -874,6 +885,7 @@ button:active {
     height: 100%;
     margin: 0;
     padding: 15px 55px 15px 15px;
+    text-align: center;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -895,13 +907,16 @@ button:active {
     background: whitesmoke;
     overflow: hidden;
 }
-.item-grid .item[data-rare="basic"] {
+.item-grid .item[data-rare="basic"],
+.item-grid .item[data-size="small"] {
     background: #2f6b3c;
 }
-.item-grid .item[data-rare="rare"] {
+.item-grid .item[data-rare="rare"],
+.item-grid .item[data-size="medium"] {
     background: #557f9e;
 }
-.item-grid .item[data-rare="legendary"] {
+.item-grid .item[data-rare="legendary"],
+.item-grid .item[data-size="large"] {
     background: #4e3263;
 }
 .item-grid .item[data-rare="exotic"] {
@@ -929,6 +944,65 @@ button:active {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+.item-grid .item i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-size: 38px;
+    line-height: 42px;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+}
+.shop-item {
+    display: inline-block;
+    width: 60px;
+    margin: 0 15px;
+    font-size: 14px;
+    line-height: 14px;
+}
+.shop-item .item {
+    margin: 5px auto;
+    float: none;
+}
+.shop-item .price {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 5px 0;
+    font-size: 14px;
+    line-height: 14px;
+    color: gold;
+    text-align: center;
+}
+.shop-item .amount {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 5px 0;
+    font-size: 14px;
+    line-height: 14px;
+    color: limegreen;
+    text-align: center;
+}
+.shop-item .stats span {
+    display: block;
+    width: 100%;
+}
+.shop-item .stats .dmg {
+    color: white;
+}
+.shop-item .stats .crit {
+    color: red;
+}
+.shop-item .stats .special {
+    color: gold;
+}
+#shop .noitems {
+    font-size: 16px;
+    line-height: 20px;
+    color: #ffffff;
 }
 /*------------------------*
  *------ Animations ------*
