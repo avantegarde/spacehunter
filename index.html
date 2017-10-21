@@ -15,17 +15,20 @@
     <div id="notif"></div>
     <!-- Header -->
     <div id="header" class="clearfix">
+        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
         <span class="toggle-fullscreen"><i class="gi gi-expand"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
-        <span id="units">units: <span></span></span> |
+        <span id="units">$<span></span></span>
         <span id="game-reset">🗑️</span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
     <!-- Inventory -->
     <div id="inventory" class="clearfix"></div>
+    <!-- Shop -->
+    <div id="shop" class="clearfix"></div>
     <!-- Character -->
     <div id="character" class="clearfix"></div>
 </div><!-- #game -->
@@ -138,7 +141,9 @@ $(document).ready(function() {
             killCount: 0
         };
         state.monsters = buildMonsters(state.player);
+        state.shop = buildShop(state);
         save(state);
+        console.log(state);
     }
     /**
      * Initial Load / Save
@@ -151,6 +156,7 @@ $(document).ready(function() {
     }
     renderInventory(state.inventory);
     updatePlayer(state.player);
+    renderShop();
     /**
      * Save state
      * @param state
@@ -641,7 +647,7 @@ $(document).ready(function() {
             battleground.empty();
             //for (var i = monsters.length - 1; i >= 0; --i) {
             for (i=0;i < monsters.length; i++) {
-                console.log(monsters[i]);
+                //console.log(monsters[i]);
                 if(monsters[i].health > 0) {
                     frag.push('' +
                         '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
@@ -816,10 +822,113 @@ $(document).ready(function() {
         }
     }
     /**
+     * Build Shop
+     * @param player
+     */
+    function buildShop(state){
+        console.log('buildShop()');
+        var shopInventory = {};
+        var potions = [
+            {
+                name: 'Small Health',
+                type: 'healing',
+                amount: 25,
+                price: 100
+            },
+            {
+                name: 'Medium Health',
+                type: 'healing',
+                amount: 50,
+                price: 200
+            },
+            {
+                name: 'Large Health',
+                type: 'healing',
+                amount: 100,
+                price: 300
+            }
+        ];
+        var weapons = [
+            generateWeapon(state.player, false, 100),
+            generateWeapon(state.player, true, 200),
+            generateWeapon(state.player, false, 125)
+        ];
+
+        shopInventory.potions = potions;
+        shopInventory.weapons = weapons;
+        return shopInventory;
+    }
+    /**
+     * Render the shop
+     * @param
+     */
+    function renderShop(){
+        console.log('renderShop()');
+        var holder = $('#shop');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<span class="toggle-shop">x</span>');
+            frag.push('<div id="shop-potions" class="clearfix"></div>');
+            frag.push('<div id="shop-weapons" class="clearfix"></div>');
+        }
+        holder.append(frag.join(''));
+        renderShopPotions();
+        renderShopWeapons();
+    }
+    /**
+     * Render shop potions
+     * @param null
+     */
+    function renderShopPotions(){
+        console.log('renderShopPotions()');
+        var holder = $('#shop-potions');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<div class="item-grid potion-grid">');
+            for (i=0;i < state.shop.potions.length; i++) {
+                frag.push('' +
+                    '<div class="item" data-item="' + state.shop.potions[i].name + '">' +
+                    '   <i class="gi gi-standing-potion"></i><br>' +
+                    '   <p>'+ state.shop.potions[i].name +'</p>' +
+                    '   <span id="price">' + state.shop.potions[i].price + '</span>' +
+                    //'   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
+                    '</div>');
+            }
+            frag.push('</div>');
+            frag.push('</div>');
+            holder.append(frag.join(''));
+        }
+    }
+    /**
+     * Render shop weapons
+     * @param player
+     */
+    function renderShopWeapons(){
+        console.log('renderShopWeapons()');
+        var holder = $('#shop-weapons');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<div class="item-grid weapon-grid">');
+            for (i=0;i < state.shop.weapons.length; i++) {
+                frag.push('' +
+                    '<div class="item" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
+                    '   <div class="item-img" style="background-image:url(' + state.shop.weapons[i].imgURL + ');"></div>' +
+                    '   <span id="price">' + state.shop.weapons[i].price + '</span>' +
+                    '</div>');
+            }
+            frag.push('</div>');
+            frag.push('</div>');
+            holder.append(frag.join(''));
+        }
+    }
+    /**
      * Generate Weapon
      * @param player
      */
-    function generateWeapon(player, upgrade){
+    function generateWeapon(player, upgrade, price){
         console.log('generateWeapon()');
         //var weapon_number = state.inventory.length + 1;
         //var weaponID = 'w' + weapon_number.toString();
@@ -828,8 +937,8 @@ $(document).ready(function() {
         if(upgrade === true){
             var highestDMG = getHighWeapon();
             weapon_dmg = randomIntFromInterval(highestDMG + 1,highestDMG + 10);
-            console.log(highestDMG);
-            console.log(weapon_dmg);
+            //console.log(highestDMG);
+            //console.log(weapon_dmg);
         }
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
         var weapon_el = randomElemental();
@@ -841,6 +950,12 @@ $(document).ready(function() {
         } else if(weapon_el === 'earth'){
             weapon_img = 'img/pistol_'+ randomIntFromInterval(21,30) +'.png';
         }
+        if(price){
+            weapon_value = price;
+        } else {
+            var highestDMG = getHighWeapon();
+            weapon_value = randomIntFromInterval(highestDMG * 10,highestDMG * 15);
+        }
         var weapon = {
             id: weaponID,
             name: randomMonsterName(),
@@ -849,7 +964,8 @@ $(document).ready(function() {
             crit: weapon_crit,
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,
-            rare: randomRarity()
+            rare: randomRarity(),
+            price: weapon_value
         };
         return weapon;
     }
@@ -884,6 +1000,17 @@ $(document).ready(function() {
             inventory.removeClass('active');
         } else {
             inventory.addClass('active');
+        }
+    }
+    /**
+     * Toggle Shop
+     */
+    function toggleShop(){
+        var shop = $('#shop');
+        if(shop.hasClass('active')){
+            shop.removeClass('active');
+        } else {
+            shop.addClass('active');
         }
     }
     /**
@@ -958,6 +1085,10 @@ $(document).ready(function() {
         if (deleteConfirm == true) {
             deleteInventoryItem(weapon.id);
         }
+    });
+    // Open Shop
+    $(document).on('click', '.toggle-shop', function() {
+        toggleShop();
     });
 
 
