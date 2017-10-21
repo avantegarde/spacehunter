@@ -16,16 +16,19 @@
     <!-- Header -->
     <div id="header" class="clearfix">
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
+        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
         <span class="toggle-fullscreen"><i class="gi gi-expand"></i></span>
-        <span id="level">Lvl: <span></span></span>
-        <span id="xp">XP: <span></span></span>
-        <!-- <span id="units">units: 0</span> -->
+        <span id="level">Lvl: <span></span></span> |
+        <span id="xp">XP: <span></span></span> |
+        <span id="units">$<span></span></span>
         <span id="game-reset">🗑️</span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
     <!-- Inventory -->
     <div id="inventory" class="clearfix"></div>
+    <!-- Shop -->
+    <div id="shop" class="clearfix"></div>
     <!-- Character -->
     <div id="character" class="clearfix"></div>
 </div><!-- #game -->
@@ -97,6 +100,33 @@ $(document).ready(function() {
         });
         return uuid;
     }
+    // Set Cookie
+    function setCookie(cname, cvalue, exdays, path) {
+        var d = new Date();
+        if (path){
+            var path = path;
+        } else {
+            var path = "";
+        }
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/" + path;
+    }
+    // Get Cookie
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
     /**
      * Global Variables
      */
@@ -140,6 +170,18 @@ $(document).ready(function() {
         state.monsters = buildMonsters(state.player);
         save(state);
     }
+    if (state.shop) {
+        var shopRefresh = getCookie('shopRefresh');
+        if (shopRefresh != "") {
+            return false; // Don't refresh the shop
+        } else {
+            // Refresh the shop
+            state.shop = buildShop(state);
+            setCookie('shopRefresh', 'value', 3, '');
+        }
+    } else {
+        state.shop = buildShop(state);
+    }
     /**
      * Initial Load / Save
      */
@@ -151,6 +193,7 @@ $(document).ready(function() {
     }
     renderInventory(state.inventory);
     updatePlayer(state.player);
+    renderShop();
     /**
      * Save state
      * @param state
@@ -289,6 +332,7 @@ $(document).ready(function() {
         }
         if (monster.health < 1) {
             grantXP(player, 125);
+            grantUnits(player, 10);
             destroyMonster(monster);
             var monsterCount = $('#battleground').find('.monster').length;
             if(monsterCount <= 0) {
@@ -406,8 +450,10 @@ $(document).ready(function() {
         // Update Header Info
         var lvl = $('#header #level > span');
         var xp = $('#header #xp > span');
+        var units = $('#header #units > span');
         lvl.html(player.lvl);
         xp.html(player.xp);
+        units.html(player.units);
         // Update Healthbar
         var healthbar = $('#character .healthbar');
         healthbar.find('.health-digit > span').html(player.health);
@@ -431,6 +477,14 @@ $(document).ready(function() {
             player.lvl = player.lvl + lvlInc;
             player.xp = player.xp - (lvlInc * 1000);
         }
+    }
+    /**
+     * Grant Units
+     * @param int
+     */
+    function grantUnits(player, units){
+        console.log('grantUnits(player, int)');
+        player.units = player.units + units;
     }
     /**
      * Grant Weapon
@@ -542,6 +596,8 @@ $(document).ready(function() {
         updatePlayer(state.player);
         //generate weapon
         grantWeapon();
+        //give units
+        grantUnits(player, 25);
         //save
         save(state);
     }
@@ -586,8 +642,8 @@ $(document).ready(function() {
         console.log('buildMonsters()');
         var monsters = [];
         var monster_number = randomIntFromInterval(4,10);
-        var monster_lvl = player.lvl;
         for(i=0;i<monster_number;i++){
+            var monster_lvl = player.lvl - 1 + randomIntFromInterval(1,3);
             var healthCalc = player.lvl * 35;
             var monster_health = randomIntFromInterval((healthCalc / 1.5),healthCalc);
             if (monster_health < 100) {
@@ -628,7 +684,7 @@ $(document).ready(function() {
             battleground.empty();
             //for (var i = monsters.length - 1; i >= 0; --i) {
             for (i=0;i < monsters.length; i++) {
-                console.log(monsters[i]);
+                //console.log(monsters[i]);
                 if(monsters[i].health > 0) {
                     frag.push('' +
                         '<div class="monster" data-monster="' + monsters[i].name + '" data-element="' + monsters[i].el + '">' +
@@ -803,10 +859,162 @@ $(document).ready(function() {
         }
     }
     /**
+     * Build Shop
+     * @param player
+     */
+    function buildShop(state){
+        console.log('buildShop()');
+        var shopInventory = {};
+        var potions = [
+            {
+                name: 'Small Health',
+                type: 'healing',
+                size: 'small',
+                amount: 25,
+                price: 100
+            }
+            /*{
+                name: 'Medium Health',
+                type: 'healing',
+                size: 'medium',
+                amount: 50,
+                price: 200
+            },
+            {
+                name: 'Large Health',
+                type: 'healing',
+                size: 'large',
+                amount: 100,
+                price: 300
+            }*/
+        ];
+        var weapons = [
+            generateWeapon(state.player, false, 100),
+            generateWeapon(state.player, true, 200),
+            generateWeapon(state.player, false, 125)
+        ];
+
+        shopInventory.potions = potions;
+        shopInventory.weapons = weapons;
+        return shopInventory;
+    }
+    /**
+     * Render the shop
+     * @param
+     */
+    function renderShop(){
+        console.log('renderShop()');
+        var holder = $('#shop');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<span class="toggle-shop">x</span>');
+            frag.push('<div id="shop-potions" class="clearfix"></div>');
+            frag.push('<div id="shop-weapons" class="clearfix"></div>');
+        }
+        holder.append(frag.join(''));
+        renderShopPotions();
+        renderShopWeapons();
+    }
+    /**
+     * Render shop potions
+     * @param null
+     */
+    function renderShopPotions(){
+        console.log('renderShopPotions()');
+        var holder = $('#shop-potions');
+        var potionVal = Math.floor(state.player.maxHealth / 4.33);
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<div class="item-grid potion-grid">');
+            for (i=0;i < state.shop.potions.length; i++) {
+                frag.push('' +
+                    '<div class="shop-item">' +
+                    '   <span class="price">$' + state.shop.potions[i].price + '</span>' +
+                    '   <div class="item" data-item="' + state.shop.potions[i].name + '" data-size="' + state.shop.potions[i].size + '">' +
+                    '       <i class="gi gi-standing-potion"></i>' +
+                    '   </div>' +
+                    //'   <span class="amount">+'+ potionVal +'</span>' +
+                    '   <button class="purchase" data-item-id="' + i + '" data-type="potion">Buy</button>' +
+                    '</div>');
+            }
+            frag.push('</div>');
+            frag.push('</div>');
+            holder.append(frag.join(''));
+        }
+    }
+    /**
+     * Render shop weapons
+     * @param player
+     */
+    function renderShopWeapons(){
+        console.log('renderShopWeapons()');
+        var holder = $('#shop-weapons');
+        var frag = [];
+        if(holder) {
+            holder.empty();
+            frag.push('<div class="item-grid weapon-grid">');
+            for (i=0;i < state.shop.weapons.length; i++) {
+                frag.push('' +
+                    '<div class="shop-item" data-price="' + state.shop.weapons[i].price + '">' +
+                    '   <span class="price">$' + state.shop.weapons[i].price + '</span>' +
+                    '   <div class="item" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
+                    '       <div class="item-img" style="background-image:url(' + state.shop.weapons[i].imgURL + ');"></div>' +
+                    '   </div>' +
+                    '   <div class="stats clearfix">' +
+                    '       <span class="element"><img src="img/' + state.shop.weapons[i].el + '.png"></span>' +
+                    '       <span class="dmg">' + state.shop.weapons[i].dmg + '</span>' +
+                    '       <span class="crit">' + state.shop.weapons[i].crit + '</span>' +
+                    '       <span class="special">' + state.shop.weapons[i].special + '</span>' +
+                    '   </div>' +
+                    '   <button class="purchase" data-item-id="' + i + '" data-type="weapon">Buy</button>' +
+                    '</div>');
+            }
+            if (state.shop.weapons.length < 1) {
+                frag.push('<p class="noitems">No more weapons for sale. <br>Check back in a couple days!</p>');
+            }
+            frag.push('</div>');
+            frag.push('</div>');
+            holder.append(frag.join(''));
+        }
+    }
+    /**
+     * Purchase Shop Item
+     * @param price
+     */
+    function purchaseItem(item, type){
+        console.log('purchaseItem(price)');
+        var playerUnits = state.player.units;
+        if(playerUnits < item.price) {
+            notif.err('You have insufficient credits for this purchase.');
+        } else {
+            if (type === 'weapon') {
+                if(state.inventory.length > 60) {
+                    notif.err('You have too many items. please remove some before purchasing.');
+                } else {
+                    state.inventory.push(item);
+                    state.shop.weapons.splice($.inArray(item, state.shop.weapons),1);
+                    renderShopWeapons();
+                }
+            } else if (type === 'potion') {
+                if (state.player.potionCount < 999) {
+                    state.player.potionCount = state.player.potionCount + 1;
+                } else {
+                    notif.err('You have the maximum allowed potions.');
+                }
+            }
+            state.player.units = state.player.units - item.price;
+        }
+        renderInventory(state.inventory);
+        updatePlayer(state.player);
+        save(state);
+    }
+    /**
      * Generate Weapon
      * @param player
      */
-    function generateWeapon(player, upgrade){
+    function generateWeapon(player, upgrade, price){
         console.log('generateWeapon()');
         //var weapon_number = state.inventory.length + 1;
         //var weaponID = 'w' + weapon_number.toString();
@@ -815,8 +1023,8 @@ $(document).ready(function() {
         if(upgrade === true){
             var highestDMG = getHighWeapon();
             weapon_dmg = randomIntFromInterval(highestDMG + 1,highestDMG + 10);
-            console.log(highestDMG);
-            console.log(weapon_dmg);
+            //console.log(highestDMG);
+            //console.log(weapon_dmg);
         }
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
         var weapon_el = randomElemental();
@@ -828,6 +1036,12 @@ $(document).ready(function() {
         } else if(weapon_el === 'earth'){
             weapon_img = 'img/pistol_'+ randomIntFromInterval(21,30) +'.png';
         }
+        if(price){
+            weapon_value = price;
+        } else {
+            var highestDMG = getHighWeapon();
+            weapon_value = randomIntFromInterval(highestDMG * 10,highestDMG * 15);
+        }
         var weapon = {
             id: weaponID,
             name: randomMonsterName(),
@@ -836,7 +1050,8 @@ $(document).ready(function() {
             crit: weapon_crit,
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,
-            rare: randomRarity()
+            rare: randomRarity(),
+            price: weapon_value
         };
         return weapon;
     }
@@ -865,12 +1080,47 @@ $(document).ready(function() {
     /**
      * Toggle Inventory
      */
-    function toggleInventory(){
+    function toggleInventory(visibility){
         var inventory = $('#inventory');
-        if(inventory.hasClass('active')){
-            inventory.removeClass('active');
+        if (visibility === 'show') {
+            if(!inventory.hasClass('active')){
+                inventory.addClass('active');
+                toggleShop('hide');
+            }
+        } else if (visibility === 'hide') {
+            if(inventory.hasClass('active')){
+                inventory.removeClass('active');
+            }
         } else {
-            inventory.addClass('active');
+            if(inventory.hasClass('active')){
+                inventory.removeClass('active');
+            } else {
+                inventory.addClass('active');
+                toggleShop('hide');
+            }
+        }
+    }
+    /**
+     * Toggle Shop
+     */
+    function toggleShop(visibility){
+        var shop = $('#shop');
+        if (visibility === 'show') {
+            if(!shop.hasClass('active')){
+                shop.addClass('active');
+                toggleInventory('hide');
+            }
+        } else if (visibility === 'hide') {
+            if(shop.hasClass('active')){
+                shop.removeClass('active');
+            }
+        } else {
+            if(shop.hasClass('active')){
+                shop.removeClass('active');
+            } else {
+                shop.addClass('active');
+                toggleInventory('hide');
+            }
         }
     }
     /**
@@ -945,6 +1195,21 @@ $(document).ready(function() {
         if (deleteConfirm == true) {
             deleteInventoryItem(weapon.id);
         }
+    });
+    // Open Shop
+    $(document).on('click', '.toggle-shop', function() {
+        toggleShop();
+    });
+    // Purchase Item
+    $(document).on('click', '#shop button.purchase', function() {
+        var itemType = $(this).data('type');
+        var itemID = $(this).data('item-id');
+        if (itemType === 'potion') {
+            var item = state.shop.potions[itemID];
+        } else if (itemType === 'weapon') {
+            var item = state.shop.weapons[itemID];
+        }
+        purchaseItem(item, itemType);
     });
 
 
