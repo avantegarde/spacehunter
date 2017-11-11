@@ -173,7 +173,8 @@ $(document).ready(function() {
     if (state.shop) {
         var shopRefresh = getCookie('shopRefresh');
         if (shopRefresh != "") {
-            return false; // Don't refresh the shop
+            // don't refresh the shop
+            state.shop = state.shop;
         } else {
             // Refresh the shop
             state.shop = buildShop(state);
