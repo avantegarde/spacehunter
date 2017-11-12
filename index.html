@@ -44,6 +44,14 @@ $(document).ready(function() {
         return Math.floor(Math.random()*(max-min+1)+min);
     }
     /**
+     * Random Background Image
+     */
+    function randomBGimg() {
+        var bgIMG = 'bg' + randomIntFromInterval(1,20);
+        var bgURL = 'img/' + bgIMG + '.jpg';
+        return bgURL;
+    }
+    /**
      * Random Elemental Choice
      */
     function randomElemental() {
@@ -187,6 +195,7 @@ $(document).ready(function() {
      * Initial Load / Save
      */
     renderCharacter(state.player);
+    renderLevel(state);
     if(state.boss) {
         renderBoss(state.boss);
     } else {
@@ -599,8 +608,40 @@ $(document).ready(function() {
         grantWeapon();
         //give units
         grantUnits(player, 25);
+        // update the background
+        updateBG();
         //save
         save(state);
+    }
+    /**
+     * Background Update
+     * @param
+     */
+    function updateBG(){
+        if(!state.lvlBG) {
+            state.lvlBG = 'img/bg1.jpg';
+        }
+        state.lvlBG = randomBGimg();
+        var battleground = document.getElementById('battleground');
+        if(battleground) {
+            battleground.style.backgroundImage = 'url(' + state.lvlBG + ')';
+        }
+        //save
+        save(state);
+    }
+    /**
+     * Render Level
+     * @param state
+     */
+    function renderLevel(state){
+        console.log('renderLevel()');
+        if(!state.lvlBG) {
+            state.lvlBG = 'img/bg1.jpg';
+        }
+        var battleground = document.getElementById('battleground');
+        if(battleground) {
+            battleground.style.backgroundImage = 'url(' + state.lvlBG + ')';
+        }
     }
     /**
      * Render Character
