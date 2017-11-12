@@ -446,8 +446,11 @@ $(document).ready(function() {
             grantPotions(state.player, 2);
         }
         if(monster.boss){
+            notif.ok('You found a new weapon! Check your inventory.');
             grantWeapon(true);
             grantPotions(state.player, 10);
+            // update level background
+            updateBG();
         }
         updatePlayer(state.player);
     }
@@ -590,7 +593,7 @@ $(document).ready(function() {
      * @param monsterID
      */
     function levelComplete(){
-        notif.ok('Level Complete! You found a new weapon! Check your inventory.');
+        notif.ok('Level Complete!');
         if (state.killCount >= 25) {
             state.monsters = [];
             state.boss = buildBoss(state.player);
@@ -604,12 +607,14 @@ $(document).ready(function() {
         state.player.maxHealth = state.player.maxHealth + 15;
         state.player.health = state.player.maxHealth;
         updatePlayer(state.player);
-        //generate weapon
-        grantWeapon();
+        var weaponGrant = coinToss();
+        if(weaponGrant) {
+            notif.ok('You found a new weapon! Check your inventory.');
+            //generate weapon
+            grantWeapon();
+        }
         //give units
         grantUnits(player, 25);
-        // update the background
-        updateBG();
         //save
         save(state);
     }
