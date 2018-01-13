@@ -182,7 +182,7 @@ button:active {
     width: 100%;
     height: 65px;
     font-size: 14px;
-    line-height: 35px;
+    line-height: 16px;
     text-align: center;
     margin: 0;
     padding: 15px;
@@ -218,24 +218,24 @@ button:active {
     font-size: 30px;
     line-height: 30px;
 }
-#header .toggle-fullscreen {
+#header .toggle-settings {
     display: block;
     cursor: pointer;
     position: absolute;
-    top: 18px;
-    right: 60px;
+    top: 15px;
+    right: 15px;
     margin: 0;
     padding: 0;
     cursor: pointer;
 }
-#header .toggle-fullscreen i {
-    font-size: 30px;
+#header .toggle-settings i {
+    font-size: 26px;
     line-height: 30px;
 }
-#game-reset {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+#header #wparts {
+    display: block;
+    width: 150px;
+    margin: auto;
 }
 @media screen and (max-width: 400px) {
     #header .toggle-inventory i,
@@ -250,6 +250,64 @@ button:active {
         right: 50px;
     }
 }
+/*--- Settings ---*/
+#settings {
+    display: block;
+    width: 100%;
+    height: auto;
+    height: calc(100% - 65px);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: -100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 99999;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+#settings.active {
+    top: 65px;
+}
+#settings > .toggle-settings {
+    position: absolute;
+    display: block;
+    width: 25px;
+    height: 25px;
+    right: 0px;
+    bottom: 0px;
+    background: rgba(255,255,255,0.1);
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+    cursor: pointer;
+}
+#settings ul.menu {
+    display: block;
+    margin: 0;
+    padding: 15px;
+    list-style: none;
+    font-size: 16px;
+    line-height: 18px;
+    color: #ffffff;
+}
+#settings ul.menu li {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+}
+#settings ul.menu li i {
+    font-size: 26px;
+    line-height: 26px;
+    vertical-align: middle;
+}
+#settings ul.menu #game-reset {
+    color: darkred;
+}
+/*--- Battleground ---*/
 #battleground {
     display: block;
     width: 100%;
@@ -347,6 +405,10 @@ button:active {
     vertical-align: middle;
 }
 #character #potion .inner {
+    line-height: 40px;
+}
+#character #potion i {
+    font-size: 32px;
     line-height: 40px;
 }
 #character #potion span.potion-count {
@@ -462,21 +524,23 @@ button:active {
 }
 .monster-img {
     display: block;
-    width: 64px;
-    height: 64px;
+    width: 66px;
+    height: 66px;
     border-radius: 0;
     float: left;
-    margin: 15px 0 0 9px;
+    margin: 15px 0 0 8px;
+    background-color: #000000;
     background-image:url(img/monsters.png);
     background-repeat: no-repeat;
     background-position: -2px -2px;
+    border: 1px groove #cccccc;
     overflow: hidden;
     position: relative;
     z-index: 99;
 }
 .monster .monster-name {
     display: block;
-    width: calc(100% - 73px);
+    width: calc(100% - 75px);
     height: 30px;
     float: left;
     padding: 7px 12px 0 30px;
@@ -491,7 +555,7 @@ button:active {
 .monster .monster-details {
     display: block;
     width: 140px;
-    padding: 0 9px;
+    padding: 0 8px;
     float: left;
     position: relative;
     z-index: 99;
@@ -551,6 +615,9 @@ button:active {
     width: 100%;
     height: 100%;
     background: blue;
+}
+.monster .shield .shield-digit {
+    display: none;
 }
 .monster .healthbar {
     display: block;
@@ -729,17 +796,24 @@ button:active {
     display: block;
     width: 100%;
     float: none;
+    clear: both;
     margin: 0;
-    padding: 0;
+    padding: 8px 0 0 0;
     color: yellow;
 }
 #inventory #item-viewer .stats > span,
 #inventory #item-viewer .stats .equipped > span {
-    display: inline-block;
-    width: 24%;
+    display: block;
+    width: 20%;
+    float: left;
     margin: 0;
-    padding: 0;
+    padding: 0 2px;
     overflow: hidden;
+    text-align: center;
+}
+#inventory #item-viewer .stats > span.element img,
+#inventory #item-viewer .stats .equipped > span.element img {
+    vertical-align: middle;
 }
 #inventory #item-viewer .actions {
     display: block;
