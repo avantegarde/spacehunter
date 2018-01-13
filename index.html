@@ -2,6 +2,8 @@
 <html>
 <head>
     <meta charset=utf-8>
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
     <title>SpaceHunter</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -17,14 +19,22 @@
     <div id="header" class="clearfix">
         <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
         <span class="toggle-shop"><i class="gi gi-acid"></i></span>
-        <span class="toggle-fullscreen"><i class="gi gi-expand"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
         <span id="units">$<span></span></span>
-        <span id="game-reset">🗑️</span>
+        <span id="wparts">* <span></span></span>
+        <span class="toggle-settings"><i class="gi gi-gears"></i></span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
+    <!-- Settings -->
+    <div id="settings" class="clearfix">
+        <span class="toggle-settings">x</span>
+        <ul class="menu">
+            <li><span class="toggle-fullscreen"><i class="gi gi-expand"></i> Fullscreen</span></li>
+            <li><span id="game-reset">🗑️ Delete Character</span></li>
+        </ul>
+    </div>
     <!-- Inventory -->
     <div id="inventory" class="clearfix"></div>
     <!-- Shop -->
@@ -151,12 +161,14 @@ $(document).ready(function() {
                 health: 100,
                 maxHealth: 100,
                 potionCount: 25,
+                weaponParts: 0,
                 weapon: {
                     id: '001',
                     name: 'sword',
                     dmg: 25,
                     el: 'none',
                     crit: 25 * 2,
+                    crit_p: 0,
                     special: 25 + (25 / 2),
                     imgURL: 'img/Sword1.png',
                     rare: 'basic'
@@ -168,6 +180,7 @@ $(document).ready(function() {
                 dmg: 25,
                 el: 'none',
                 crit: 25 * 2,
+                crit_p: 0,
                 special: 25 + (25 / 2),
                 imgURL: 'img/Sword1.png',
                 rare: 'basic'
@@ -286,6 +299,8 @@ $(document).ready(function() {
         var playerHealth = player.health;
         var playerDMG = player.weapon.dmg;
         var playerCrit = player.weapon.crit;
+        var playerCritPercent = player.weapon.crit_p?player.weapon.crit_p/100:0.25;
+        var critChance = Math.random();
         var weaponEl = player.weapon.el;
         var monsterShield = monster.shield;
         var monsterHealth = monster.health;
@@ -311,7 +326,7 @@ $(document).ready(function() {
          *  earth > water
          */
         if(weaponEl === monsterEl) {
-            playerDMG = playerDMG * 0.9;
+            playerDMG = playerDMG * 1;
         } else if(weaponEl === 'water' && monsterEl === 'fire') {
             playerDMG = playerDMG * 1.5;
         } else if(weaponEl === 'water' && monsterEl === 'earth') {
@@ -325,8 +340,10 @@ $(document).ready(function() {
         } else if(weaponEl === 'earth' && monsterEl === 'fire') {
             playerDMG = playerDMG * 0.75;
         }
-
-        if(critRollPlayer === 7){
+        /**
+         * Weapon Critical hit chance
+         */
+        if (critChance < playerCritPercent) {
             criticalHitMonster(monster);
             if(monster.shield > 0){
                 monster.shield = monsterShield - playerCrit;
@@ -464,9 +481,11 @@ $(document).ready(function() {
         var lvl = $('#header #level > span');
         var xp = $('#header #xp > span');
         var units = $('#header #units > span');
+        var wparts = $('#header #wparts > span');
         lvl.html(player.lvl);
         xp.html(player.xp);
         units.html(player.units);
+        wparts.html(player.weaponParts);
         // Update Healthbar
         var healthbar = $('#character .healthbar');
         healthbar.find('.health-digit > span').html(player.health);
@@ -498,6 +517,14 @@ $(document).ready(function() {
     function grantUnits(player, units){
         console.log('grantUnits(player, int)');
         player.units = player.units + units;
+    }
+    /**
+     * Grant Weapon Parts
+     * @param int
+     */
+    function grantWeaponParts(player, wparts){
+        console.log('grantWeaponParts(player, int)');
+        player.weaponParts = player.weaponParts + wparts;
     }
     /**
      * Grant Weapon
@@ -585,6 +612,9 @@ $(document).ready(function() {
                 }
             }
         }
+        //grant weapon parts
+        grantWeaponParts(state.player, randomIntFromInterval(5,10));
+        updatePlayer(state.player);
         renderInventory(inventory);
         save(state);
     }
@@ -670,7 +700,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="character-right clearfix">' +
                 '   <div id="potion" class="player-potion">' +
-                '   <span class="inner">🍕 <span class="potion-count">'+ player.potionCount +'</span></span>' +
+                '   <span class="inner"><i class="gi gi-acid"></i> <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
                 '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner" data-rare="'+ player.weapon.rare +'">' +
@@ -884,11 +914,13 @@ $(document).ready(function() {
                 '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
                 '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
                 '   <span class="crit">crit: ' + state.player.weapon.crit + '</span>' +
+                '   <span class="crit">crit %: ' + state.player.weapon.crit_p + '</span>' +
                 '   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
                 '   <div class="equipped  clearfix">' +
                 '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
                 '       <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
                 '       <span class="crit">crit: ' + weapon.crit + '</span>' +
+                '       <span class="crit">crit %: ' + weapon.crit_p + '</span>' +
                 '       <span class="special">sp: ' + weapon.special + '</span>' +
                 '   </div>' +
                 '</div>' +
@@ -1013,6 +1045,7 @@ $(document).ready(function() {
                     '       <span class="element"><img src="img/' + state.shop.weapons[i].el + '.png"></span>' +
                     '       <span class="dmg">' + state.shop.weapons[i].dmg + '</span>' +
                     '       <span class="crit">' + state.shop.weapons[i].crit + '</span>' +
+                    '       <span class="crit_p">' + state.shop.weapons[i].crit_p + '</span>' +
                     '       <span class="special">' + state.shop.weapons[i].special + '</span>' +
                     '   </div>' +
                     '   <button class="purchase" data-item-id="' + i + '" data-type="weapon">Buy</button>' +
@@ -1073,7 +1106,16 @@ $(document).ready(function() {
             //console.log(highestDMG);
             //console.log(weapon_dmg);
         }
+        var rarity = randomRarity();
         var weapon_crit = randomIntFromInterval(weapon_dmg * 1.25,weapon_dmg * 1.75);
+        var crit_percent = randomIntFromInterval(1,15);
+        if (rarity === 'rare') {
+            var crit_percent = randomIntFromInterval(15,33);
+        } else if (rarity === 'legendary') {
+            var crit_percent = randomIntFromInterval(33,50);
+        } else if (rarity === 'exotic') {
+            var crit_percent = randomIntFromInterval(50,99);
+        }
         var weapon_el = randomElemental();
         var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,40) +'.png';
         if(weapon_el === 'water'){
@@ -1095,9 +1137,10 @@ $(document).ready(function() {
             dmg: weapon_dmg,
             el: weapon_el,
             crit: weapon_crit,
+            crit_p: crit_percent,
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,
-            rare: randomRarity(),
+            rare: rarity,
             price: weapon_value
         };
         return weapon;
@@ -1133,6 +1176,7 @@ $(document).ready(function() {
             if(!inventory.hasClass('active')){
                 inventory.addClass('active');
                 toggleShop('hide');
+                toggleSettings('hide');
             }
         } else if (visibility === 'hide') {
             if(inventory.hasClass('active')){
@@ -1144,6 +1188,7 @@ $(document).ready(function() {
             } else {
                 inventory.addClass('active');
                 toggleShop('hide');
+                toggleSettings('hide');
             }
         }
     }
@@ -1156,6 +1201,7 @@ $(document).ready(function() {
             if(!shop.hasClass('active')){
                 shop.addClass('active');
                 toggleInventory('hide');
+                toggleSettings('hide');
             }
         } else if (visibility === 'hide') {
             if(shop.hasClass('active')){
@@ -1167,6 +1213,32 @@ $(document).ready(function() {
             } else {
                 shop.addClass('active');
                 toggleInventory('hide');
+                toggleSettings('hide');
+            }
+        }
+    }
+    /**
+     * Toggle Settings
+     */
+    function toggleSettings(visibility){
+        var settings = $('#settings');
+        if (visibility === 'show') {
+            if(!settings.hasClass('active')){
+                settings.addClass('active');
+                toggleInventory('hide');
+                toggleShop('hide');
+            }
+        } else if (visibility === 'hide') {
+            if(settings.hasClass('active')){
+                settings.removeClass('active');
+            }
+        } else {
+            if(settings.hasClass('active')){
+                settings.removeClass('active');
+            } else {
+                settings.addClass('active');
+                toggleInventory('hide');
+                toggleShop('hide');
             }
         }
     }
@@ -1242,6 +1314,10 @@ $(document).ready(function() {
         if (deleteConfirm == true) {
             deleteInventoryItem(weapon.id);
         }
+    });
+    // Open Settings
+    $(document).on('click', '.toggle-settings', function() {
+        toggleSettings();
     });
     // Open Shop
     $(document).on('click', '.toggle-shop', function() {
