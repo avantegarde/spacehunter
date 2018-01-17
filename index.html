@@ -8,7 +8,7 @@
     <title>SpaceHunter</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link type="image/x-icon" rel="shortcut icon" href="apple-touch-icon.png"/>
-    <link rel="stylesheet" href="game-icons.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="icons.css" type="text/css" media="all" />
     <link rel="stylesheet" href="style.css" type="text/css" media="all" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
@@ -17,13 +17,13 @@
     <div id="notif"></div>
     <!-- Header -->
     <div id="header" class="clearfix">
-        <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
-        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
+        <span class="toggle-inventory"><i class="icon-backpack"></i></span>
+        <span class="toggle-shop"><i class="icon-potion"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
         <span id="units">$<span></span></span>
         <span id="wparts">* <span></span></span>
-        <span class="toggle-settings"><i class="gi gi-gears"></i></span>
+        <span class="toggle-settings"><i class="icon-gear-a"></i></span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
@@ -31,8 +31,8 @@
     <div id="settings" class="clearfix">
         <span class="toggle-settings">x</span>
         <ul class="menu">
-            <li><span class="toggle-fullscreen"><i class="gi gi-expand"></i> Fullscreen</span></li>
-            <li><span id="game-reset">🗑️ Delete Character</span></li>
+            <li><span class="toggle-fullscreen"><i class="icon-arrow-expand"></i> Fullscreen</span></li>
+            <li><span id="game-reset"><i class="icon-trash-a"></i> Delete Character</span></li>
         </ul>
     </div>
     <!-- Inventory -->
@@ -690,7 +690,7 @@ $(document).ready(function() {
             character.empty();
             frag.push('' +
                 '<div class="character-left clearfix">' +
-                '   <div id="player"><i class="gi gi-astronaut-helmet"></i></div>' +
+                '   <div id="player"><i class="icon-space-hunter"></i></div>' +
                 '   <div id="health">' +
                 '       <div class="healthbar">' +
                 '           <span class="health-digit"><span>100</span> ❤️</span>' +
@@ -700,7 +700,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="character-right clearfix">' +
                 '   <div id="potion" class="player-potion">' +
-                '   <span class="inner"><i class="gi gi-acid"></i> <span class="potion-count">'+ player.potionCount +'</span></span>' +
+                '   <span class="inner"><i class="icon-potion-bubbles"></i> <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
                 '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner" data-rare="'+ player.weapon.rare +'">' +
@@ -769,7 +769,7 @@ $(document).ready(function() {
                         '   <div class="monster-name">' +
                         '       <span class="name">' + monsters[i].name + '</span>' +
                         '   </div>' +
-                        '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                        '   <button class="attack-monster"></button>' +
                         '   <div class="monster-details">' +
                         '       <div class="stats clearfix">' +
                         '           <span class="level">' + monsters[i].lvl + '</span>' +
@@ -846,7 +846,7 @@ $(document).ready(function() {
                 '   <div class="monster-name">' +
                 '       <span class="name">Boss: ' + boss.name + '</span>' +
                 '   </div>' +
-                '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                '   <button class="attack-monster"></button>' +
                 '   <div class="monster-details">' +
                 '       <div class="stats clearfix">' +
                 '           <span class="level">' + boss.lvl + '</span>' +
@@ -926,7 +926,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="actions clearfix">' +
                 '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button>' +
-                '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="gi gi-trash-can"></i></button>' +
+                '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="icon-trash-a"></i></button>' +
                 '</div>');
             holder.append(frag.join(''));
 
@@ -1012,7 +1012,7 @@ $(document).ready(function() {
                     '<div class="shop-item">' +
                     '   <span class="price">$' + state.shop.potions[i].price + '</span>' +
                     '   <div class="item" data-item="' + state.shop.potions[i].name + '" data-size="' + state.shop.potions[i].size + '">' +
-                    '       <i class="gi gi-standing-potion"></i>' +
+                    '       <i class="icon-potion"></i>' +
                     '   </div>' +
                     //'   <span class="amount">+'+ potionVal +'</span>' +
                     '   <button class="purchase" data-item-id="' + i + '" data-type="potion">Buy</button>' +

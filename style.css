@@ -229,7 +229,7 @@ button:active {
     cursor: pointer;
 }
 #header .toggle-settings i {
-    font-size: 26px;
+    font-size: 30px;
     line-height: 30px;
 }
 #header #wparts {
@@ -350,7 +350,7 @@ button:active {
 #character #player {
 
 }
-#character #player i.gi {
+#character #player i.icon-space-hunter {
     display: block;
     font-size: 50px;
     line-height: 50px;
@@ -409,7 +409,7 @@ button:active {
 }
 #character #potion i {
     font-size: 32px;
-    line-height: 40px;
+    line-height: 44px;
 }
 #character #potion span.potion-count {
     font-size: 12px;
@@ -834,6 +834,9 @@ button:active {
 }
 #inventory #item-viewer .actions button.delete {
     float: left;
+}
+#inventory #item-viewer .actions button.delete i {
+    font-size: 16px;
 }
 #inventory .inventory-grid {
     display: block;
