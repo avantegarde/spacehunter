@@ -107,7 +107,7 @@ button:active {
 .button-wide {
     padding: .4em 1.6em .36em 1.6em;
 }
-/*--- Green Button ---*/
+/*--- Red Button ---*/
 [data-button="red"],
 [data-button="red"]:hover,
 [data-button="red"]:focus,
@@ -121,6 +121,21 @@ button:active {
 }
 [data-button="red"]:active {
     background: #940028;
+}
+/*--- Blue Button ---*/
+[data-button="blue"],
+[data-button="blue"]:hover,
+[data-button="blue"]:focus,
+[data-button="blue"]:active,
+[data-button="blue"]:visited {
+    background: #5f95b6;
+}
+[data-button="blue"]:hover,
+[data-button="blue"]:focus {
+    background: #557f9e;
+}
+[data-button="blue"]:active {
+    background: #557f9e;
 }
 /*--- Layout ---*/
 #game {
@@ -229,7 +244,7 @@ button:active {
     cursor: pointer;
 }
 #header .toggle-settings i {
-    font-size: 26px;
+    font-size: 30px;
     line-height: 30px;
 }
 #header #wparts {
@@ -350,7 +365,7 @@ button:active {
 #character #player {
 
 }
-#character #player i.gi {
+#character #player i.icon-space-hunter {
     display: block;
     font-size: 50px;
     line-height: 50px;
@@ -409,7 +424,7 @@ button:active {
 }
 #character #potion i {
     font-size: 32px;
-    line-height: 40px;
+    line-height: 44px;
 }
 #character #potion span.potion-count {
     font-size: 12px;
@@ -757,6 +772,7 @@ button:active {
     color: #ffffff;
     cursor: pointer;
 }
+.item-viewer,
 #inventory #item-viewer {
     display: block;
     position: relative;
@@ -769,18 +785,23 @@ button:active {
     background-size: auto 64px;
     background-position: center 64px;
 }
+.item-viewer[data-rare="basic"],
 #inventory #item-viewer[data-rare="basic"] {
     background-color: #2f6b3c;
 }
+.item-viewer[data-rare="rare"],
 #inventory #item-viewer[data-rare="rare"] {
     background-color: #557f9e;
 }
+.item-viewer[data-rare="legendary"],
 #inventory #item-viewer[data-rare="legendary"] {
     background-color: #4e3263;
 }
+.item-viewer[data-rare="exotic"],
 #inventory #item-viewer[data-rare="exotic"] {
     background-color: #ceae32;
 }
+.item-viewer .stats,
 #inventory #item-viewer .stats {
     display: block;
     width: 100%;
@@ -792,6 +813,7 @@ button:active {
     line-height: 16px;
     color: #ffffff;
 }
+.item-viewer .stats .equipped,
 #inventory #item-viewer .stats .equipped {
     display: block;
     width: 100%;
@@ -801,6 +823,8 @@ button:active {
     padding: 8px 0 0 0;
     color: yellow;
 }
+.item-viewer .stats > span,
+.item-viewer .stats .equipped > span,
 #inventory #item-viewer .stats > span,
 #inventory #item-viewer .stats .equipped > span {
     display: block;
@@ -811,10 +835,13 @@ button:active {
     overflow: hidden;
     text-align: center;
 }
+.item-viewer .stats > span.element img,
+.item-viewer .stats .equipped > span.element img,
 #inventory #item-viewer .stats > span.element img,
-#inventory #item-viewer .stats .equipped > span.element img {
+#inventory #item-viewer .stats .equipped > span.element img{
     vertical-align: middle;
 }
+.item-viewer .actions,
 #inventory #item-viewer .actions {
     display: block;
     width: 100%;
@@ -826,14 +853,21 @@ button:active {
     line-height: 16px;
     color: #ffffff;
 }
+.item-viewer .actions button,
 #inventory #item-viewer .actions button {
     margin: 0;
 }
+.item-viewer .actions button.equip,
 #inventory #item-viewer .actions button.equip {
     float: right;
 }
+.item-viewer .actions button.delete,
 #inventory #item-viewer .actions button.delete {
     float: left;
+}
+.item-viewer .actions button.delete i,
+#inventory #item-viewer .actions button.delete i {
+    font-size: 16px;
 }
 #inventory .inventory-grid {
     display: block;
@@ -902,6 +936,49 @@ button:active {
     #inventory #item-viewer .stats {
         font-size: 12px;
         line-height: 14px;
+    }
+}
+/*--- Upgrade Modal ---*/
+#upgrade-modal {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 65px 30px 30px 30px;
+    position: absolute;
+    top: -100%;
+    left: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999999;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+#upgrade-modal.active {
+    top: 0;
+}
+#upgrade-modal > .toggle-upgrade-modal {
+    position: absolute;
+    display: block;
+    width: 25px;
+    height: 25px;
+    top: 0px;
+    right: 0px;
+    background: rgba(255,255,255,0.1);
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+    cursor: pointer;
+}
+#upgrade-modal .item-viewer {
+    margin: 0;
+}
+@media screen and (max-width: 500px) {
+    #upgrade-modal {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 /*--- Shop ---*/

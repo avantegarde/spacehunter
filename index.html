@@ -8,7 +8,7 @@
     <title>SpaceHunter</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link type="image/x-icon" rel="shortcut icon" href="apple-touch-icon.png"/>
-    <link rel="stylesheet" href="game-icons.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="icons.css" type="text/css" media="all" />
     <link rel="stylesheet" href="style.css" type="text/css" media="all" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
@@ -17,13 +17,13 @@
     <div id="notif"></div>
     <!-- Header -->
     <div id="header" class="clearfix">
-        <span class="toggle-inventory"><i class="gi gi-backpack"></i></span>
-        <span class="toggle-shop"><i class="gi gi-acid"></i></span>
+        <span class="toggle-inventory"><i class="icon-backpack"></i></span>
+        <span class="toggle-shop"><i class="icon-potion"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
         <span id="units">$<span></span></span>
-        <span id="wparts">* <span></span></span>
-        <span class="toggle-settings"><i class="gi gi-gears"></i></span>
+        <span id="wparts"><i class="icon-gear-a"></i> <span></span></span>
+        <span class="toggle-settings"><i class="icon-gear-a"></i></span>
     </div>
     <!-- Battleground -->
     <div id="battleground" class="clearfix"></div>
@@ -31,12 +31,14 @@
     <div id="settings" class="clearfix">
         <span class="toggle-settings">x</span>
         <ul class="menu">
-            <li><span class="toggle-fullscreen"><i class="gi gi-expand"></i> Fullscreen</span></li>
-            <li><span id="game-reset">🗑️ Delete Character</span></li>
+            <li><span class="toggle-fullscreen"><i class="icon-arrow-expand"></i> Fullscreen</span></li>
+            <li><span id="game-reset"><i class="icon-trash-a"></i> Delete Character</span></li>
         </ul>
     </div>
     <!-- Inventory -->
     <div id="inventory" class="clearfix"></div>
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="clearfix"></div>
     <!-- Shop -->
     <div id="shop" class="clearfix"></div>
     <!-- Character -->
@@ -544,6 +546,40 @@ $(document).ready(function() {
         renderInventory(state.inventory);
     }
     /**
+     * Upgrade Weapon
+     * @param upgrade
+     */
+    function upgradeWeapon(weapon, dmg, crit) {
+        var holder = $('#upgrade-modal');
+        var inventory = state.inventory;
+        if(state.player.weaponParts < 10) {
+            notif.err('You have insufficient parts to upgrade.');
+        } else {
+            for (i = 0; i < inventory.length; i++) {
+                var itemIndex = inventory.indexOf(inventory[i]);
+                if (inventory[i].id === weapon.id) {
+                    if (dmg && dmg > 0) {
+                        inventory[i].dmg = inventory[i].dmg + dmg;
+                        state.player.weaponParts = state.player.weaponParts - 10;
+                        holder.find('.stats span.dmg > span').html(inventory[i].dmg);
+                        holder.find('.weapon-parts > span').html(state.player.weaponParts);
+                    }
+                    if (crit && crit > 0) {
+                        inventory[i].crit = inventory[i].crit + crit;
+                        state.player.weaponParts = state.player.weaponParts - 10;
+                        holder.find('.stats span.crit > span').html(inventory[i].crit);
+                        holder.find('.weapon-parts > span').html(state.player.weaponParts);
+                    }
+                    if (state.player.weapon.id === weapon.id) {
+                        state.player.weapon = inventory[i];
+                    }
+                }
+            }
+            updatePlayer(state.player);
+            save(state);
+        }
+    }
+    /**
      * Grant potions
      * @param int
      */
@@ -690,7 +726,7 @@ $(document).ready(function() {
             character.empty();
             frag.push('' +
                 '<div class="character-left clearfix">' +
-                '   <div id="player"><i class="gi gi-astronaut-helmet"></i></div>' +
+                '   <div id="player"><i class="icon-space-hunter"></i></div>' +
                 '   <div id="health">' +
                 '       <div class="healthbar">' +
                 '           <span class="health-digit"><span>100</span> ❤️</span>' +
@@ -700,7 +736,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="character-right clearfix">' +
                 '   <div id="potion" class="player-potion">' +
-                '   <span class="inner"><i class="gi gi-acid"></i> <span class="potion-count">'+ player.potionCount +'</span></span>' +
+                '   <span class="inner"><i class="icon-potion-bubbles"></i> <span class="potion-count">'+ player.potionCount +'</span></span>' +
                 '</div>' +
                 '<div id="weapon" class="player-attack">' +
                 '   <span class="weapon-holder inner" data-rare="'+ player.weapon.rare +'">' +
@@ -769,7 +805,7 @@ $(document).ready(function() {
                         '   <div class="monster-name">' +
                         '       <span class="name">' + monsters[i].name + '</span>' +
                         '   </div>' +
-                        '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                        '   <button class="attack-monster"></button>' +
                         '   <div class="monster-details">' +
                         '       <div class="stats clearfix">' +
                         '           <span class="level">' + monsters[i].lvl + '</span>' +
@@ -846,7 +882,7 @@ $(document).ready(function() {
                 '   <div class="monster-name">' +
                 '       <span class="name">Boss: ' + boss.name + '</span>' +
                 '   </div>' +
-                '   <button class="attack-monster"><i class="gi gi-crosshair"></i></button>' +
+                '   <button class="attack-monster"></button>' +
                 '   <div class="monster-details">' +
                 '       <div class="stats clearfix">' +
                 '           <span class="level">' + boss.lvl + '</span>' +
@@ -914,19 +950,20 @@ $(document).ready(function() {
                 '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
                 '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
                 '   <span class="crit">crit: ' + state.player.weapon.crit + '</span>' +
-                '   <span class="crit">crit %: ' + state.player.weapon.crit_p + '</span>' +
+                '   <span class="crit_p">crit %: ' + state.player.weapon.crit_p + '</span>' +
                 '   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
                 '   <div class="equipped  clearfix">' +
                 '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
                 '       <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
                 '       <span class="crit">crit: ' + weapon.crit + '</span>' +
-                '       <span class="crit">crit %: ' + weapon.crit_p + '</span>' +
+                '       <span class="crit_p">crit %: ' + weapon.crit_p + '</span>' +
                 '       <span class="special">sp: ' + weapon.special + '</span>' +
                 '   </div>' +
                 '</div>' +
                 '<div class="actions clearfix">' +
                 '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button>' +
-                '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="gi gi-trash-can"></i></button>' +
+                '   <button class="upgrade" data-item-id="'+ weapon.id +'" data-button="blue"><i class="icon-gear-a"></i></button>' +
+                '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="icon-trash-a"></i></button>' +
                 '</div>');
             holder.append(frag.join(''));
 
@@ -935,6 +972,47 @@ $(document).ready(function() {
             if(!selectedItem.hasClass('active')){
                 selectedItem.addClass('active');
             }
+        }
+    }
+    /**
+     * Render Upgrade Modal
+     * @param weapon
+     */
+    function renderUpgradeModal(weapon){
+        console.log('renderUpgradeModal()');
+        var holder = $('#upgrade-modal');
+        var frag = [];
+        if(!weapon || weapon == '') {
+            var weapon = state.player.weapon;
+        }
+        if(holder) {
+            holder.empty();
+            //holder.attr('data-rare', weapon.rare);
+            //holder.css('background-image', 'url(' + weapon.imgURL + ')');
+            frag.push('<span class="toggle-upgrade-modal">x</span>');
+            frag.push('' +
+                '<div class="item-viewer" data-rare="' + weapon.rare + '" style="background-image:url(' + weapon.imgURL + ');">' +
+                '<div class="stats clearfix">' +
+                //'   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
+                //'   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
+                //'   <span class="crit">crit: ' + state.player.weapon.crit + '</span>' +
+                //'   <span class="crit_p">crit %: ' + state.player.weapon.crit_p + '</span>' +
+                //'   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
+                '   <div class="equipped  clearfix">' +
+                '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
+                '       <span class="dmg">dmg: <span>' + weapon.dmg + '</span></span>' +
+                '       <span class="crit">crit: <span>' + weapon.crit + '</span></span>' +
+                '       <span class="crit_p">crit %: ' + weapon.crit_p + '</span>' +
+                '       <span class="special">sp: <span>' + weapon.special + '</span></span>' +
+                '   </div>' +
+                '</div>' +
+                '<div class="actions clearfix">' +
+                '   <span class="weapon-parts" data-button="blue"><i class="icon-gear-a"></i><span>'+ state.player.weaponParts +'</span></span>' +
+                '   <button class="upgrade-damage" data-item-id="'+ weapon.id +'">+ DMG</button>' +
+                '   <button class="upgrade-crit" data-item-id="'+ weapon.id +'">+ CRIT</button>' +
+                '</div>' +
+                '</div>');
+            holder.append(frag.join(''));
         }
     }
     /**
@@ -1012,7 +1090,7 @@ $(document).ready(function() {
                     '<div class="shop-item">' +
                     '   <span class="price">$' + state.shop.potions[i].price + '</span>' +
                     '   <div class="item" data-item="' + state.shop.potions[i].name + '" data-size="' + state.shop.potions[i].size + '">' +
-                    '       <i class="gi gi-standing-potion"></i>' +
+                    '       <i class="icon-potion"></i>' +
                     '   </div>' +
                     //'   <span class="amount">+'+ potionVal +'</span>' +
                     '   <button class="purchase" data-item-id="' + i + '" data-type="potion">Buy</button>' +
@@ -1243,6 +1321,21 @@ $(document).ready(function() {
         }
     }
     /**
+     * Upgrade Weapon Modal
+     */
+    function toggleUpgradeModal(visibility){
+        var upgradeModal = $('#upgrade-modal');
+        if (visibility === 'show') {
+            if(!upgradeModal.hasClass('active')){
+                upgradeModal.addClass('active');
+            }
+        } else {
+            upgradeModal.removeClass('active');
+            renderInventory(state.inventory);
+            updatePlayerWeapon(state.player);
+        }
+    }
+    /**
      * Actions / Buttons
      */
     // fullscreen
@@ -1299,7 +1392,7 @@ $(document).ready(function() {
         var viewer = $('#item-viewer');
         renderWeaponViewer(weapon);
     });
-    // Set Item from inventory
+    // Equip / Set Item from inventory
     $(document).on('click', '#item-viewer button.equip', function() {
         var weaponID = $(this).data('item-id');
         var weapon = getWeapon(weaponID);
@@ -1314,6 +1407,29 @@ $(document).ready(function() {
         if (deleteConfirm == true) {
             deleteInventoryItem(weapon.id);
         }
+    });
+    // Upgrade Weapon Modal
+    $(document).on('click', '#item-viewer button.upgrade', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        renderUpgradeModal(weapon);
+        toggleUpgradeModal('show');
+    });
+    // Upgrade Weapon Damage
+    $(document).on('click', '#upgrade-modal button.upgrade-damage', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        upgradeWeapon(weapon, 1);
+    });
+    // Upgrade Weapon Crit
+    $(document).on('click', '#upgrade-modal button.upgrade-crit', function() {
+        var weaponID = $(this).data('item-id');
+        var weapon = getWeapon(weaponID);
+        upgradeWeapon(weapon, null, 1);
+    });
+    // Toggle Weapon Modal
+    $(document).on('click', '.toggle-upgrade-modal', function() {
+        toggleUpgradeModal();
     });
     // Open Settings
     $(document).on('click', '.toggle-settings', function() {
