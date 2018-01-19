@@ -22,7 +22,7 @@
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
         <span id="units">$<span></span></span>
-        <span id="wparts"><i class="icon-gear-a"></i> <span></span></span>
+        <span id="wparts"><i class="icon-weapon-parts"></i> <span></span></span>
         <span class="toggle-settings"><i class="icon-gear-a"></i></span>
     </div>
     <!-- Battleground -->
@@ -962,7 +962,7 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="actions clearfix">' +
                 '   <button class="equip" data-item-id="'+ weapon.id +'">Equip</button>' +
-                '   <button class="upgrade" data-item-id="'+ weapon.id +'" data-button="blue"><i class="icon-gear-a"></i></button>' +
+                '   <button class="upgrade" data-item-id="'+ weapon.id +'" data-button="blue">Upgrade</button>' +
                 '   <button class="delete" data-item-id="'+ weapon.id +'" data-button="red"><i class="icon-trash-a"></i></button>' +
                 '</div>');
             holder.append(frag.join(''));
@@ -992,6 +992,7 @@ $(document).ready(function() {
             frag.push('<span class="toggle-upgrade-modal">x</span>');
             frag.push('' +
                 '<div class="item-viewer" data-rare="' + weapon.rare + '" style="background-image:url(' + weapon.imgURL + ');">' +
+                '<span class="weapon-parts"><i class="icon-weapon-parts"></i><span>'+ state.player.weaponParts +'</span></span>' +
                 '<div class="stats clearfix">' +
                 //'   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
                 //'   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
@@ -1007,9 +1008,8 @@ $(document).ready(function() {
                 '   </div>' +
                 '</div>' +
                 '<div class="actions clearfix">' +
-                '   <span class="weapon-parts" data-button="blue"><i class="icon-gear-a"></i><span>'+ state.player.weaponParts +'</span></span>' +
-                '   <button class="upgrade-damage" data-item-id="'+ weapon.id +'">+ DMG</button>' +
-                '   <button class="upgrade-crit" data-item-id="'+ weapon.id +'">+ CRIT</button>' +
+                '   <button class="upgrade-damage" data-item-id="'+ weapon.id +'">+ DMG (<i class="icon-weapon-parts"></i>10)</button>' +
+                '   <button class="upgrade-crit" data-item-id="'+ weapon.id +'">+ CRIT (<i class="icon-weapon-parts"></i>10)</button>' +
                 '</div>' +
                 '</div>');
             holder.append(frag.join(''));
@@ -1333,6 +1333,7 @@ $(document).ready(function() {
             upgradeModal.removeClass('active');
             renderInventory(state.inventory);
             updatePlayerWeapon(state.player);
+            toggleInventory('show');
         }
     }
     /**

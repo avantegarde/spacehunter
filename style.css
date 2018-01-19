@@ -132,10 +132,10 @@ button:active {
 }
 [data-button="blue"]:hover,
 [data-button="blue"]:focus {
-    background: #557f9e;
+    background: #476e8c;
 }
 [data-button="blue"]:active {
-    background: #557f9e;
+    background: #476e8c;
 }
 /*--- Layout ---*/
 #game {
@@ -170,7 +170,7 @@ button:active {
     line-height: 16px;
     color: #ffffff;
     text-align: center;
-    z-index: 999999;
+    z-index: 99999999;
 }
 #notif.active {
     height: auto;
@@ -251,6 +251,10 @@ button:active {
     display: block;
     width: 150px;
     margin: auto;
+}
+#header #wparts i {
+    position: relative;
+    top: 2px;
 }
 @media screen and (max-width: 400px) {
     #header .toggle-inventory i,
@@ -783,7 +787,7 @@ button:active {
     border-bottom: 1px solid #222;
     background-repeat: no-repeat;
     background-size: auto 64px;
-    background-position: center 64px;
+    background-position: center 60px;
 }
 .item-viewer[data-rare="basic"],
 #inventory #item-viewer[data-rare="basic"] {
@@ -859,6 +863,10 @@ button:active {
 }
 .item-viewer .actions button.equip,
 #inventory #item-viewer .actions button.equip {
+    float: right;
+}
+#inventory #item-viewer .actions button.upgrade {
+    margin-right: 15px;
     float: right;
 }
 .item-viewer .actions button.delete,
@@ -949,7 +957,7 @@ button:active {
     position: absolute;
     top: -100%;
     left: 0;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.9);
     z-index: 9999999;
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
@@ -962,7 +970,7 @@ button:active {
     display: block;
     width: 25px;
     height: 25px;
-    top: 0px;
+    bottom: 0px;
     right: 0px;
     background: rgba(255,255,255,0.1);
     font-size: 16px;
@@ -974,6 +982,29 @@ button:active {
 }
 #upgrade-modal .item-viewer {
     margin: 0;
+}
+#upgrade-modal .item-viewer .weapon-parts {
+    display: block;
+    width: 100%;
+    margin: 0;
+    position: absolute;
+    top: -32px;
+    text-align: center;
+    font-size: 18px;
+    line-height: 18px;
+    color: #ffffff;
+}
+#upgrade-modal .item-viewer .weapon-parts i {
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
+}
+#upgrade-modal .item-viewer .actions {
+    text-align: center;
+}
+#upgrade-modal .item-viewer .actions button .icon-weapon-parts {
+    position: relative;
+    top: 2px;
 }
 @media screen and (max-width: 500px) {
     #upgrade-modal {
