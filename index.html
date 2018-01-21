@@ -99,7 +99,9 @@ $(document).ready(function() {
     function randomMonsterName() {
         var adjectives = ["little", "sea", "huge", "strange", "double", "prehistoric", "human", "marine", "hideous", "fabulous", "mythical", "terrible", "horrible", "moral", "headed", "eyed", "grotesque", "evil", "inhuman", "hopeful", "ugly", "winged", "fantastic", "giant", "mechanical", "imaginary", "like", "female", "savage", "frightful", "big", "mythological", "gigantic", "cruel", "antediluvian", "extinct", "ferocious", "eating", "green", "horrid", "supernatural", "fierce", "hairy", "maligned", "dangerous", "famous", "unnatural", "scary", "uncouth", "shapeless", "dreadful", "fearful", "headless", "cold", "baggy", "alien", "mighty", "bloodthirsty", "aquatic", "fearsome", "legendary", "unknown", "primeval", "sacred", "scaly", "hungry", "enormous", "loose", "unwieldy", "grim", "voracious", "fabled", "weird", "hybrid", "dead"];
         var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "balloon", "mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
-        return randomName(adjectives) + ' ' + randomName(nouns);
+        var fullname = randomName(adjectives) + randomName(nouns);
+        //return randomName(adjectives) + ' ' + randomName(nouns);
+        return fullname.substring(0,14);
     }
     /**
      * Random Name Picker
