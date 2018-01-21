@@ -18,7 +18,7 @@
     <!-- Header -->
     <div id="header" class="clearfix">
         <span class="toggle-inventory"><i class="icon-backpack"></i></span>
-        <span class="toggle-shop"><i class="icon-potion"></i></span>
+        <span class="toggle-shop"><i class="icon-shop"></i></span>
         <span id="level">Lvl: <span></span></span> |
         <span id="xp">XP: <span></span></span> |
         <span id="units">$<span></span></span>
@@ -201,7 +201,7 @@ $(document).ready(function() {
         } else {
             // Refresh the shop
             state.shop = buildShop(state);
-            setCookie('shopRefresh', 'value', 3, '');
+            setCookie('shopRefresh', 'value', 1, '');
         }
     } else {
         state.shop = buildShop(state);
@@ -729,7 +729,7 @@ $(document).ready(function() {
                 '   <div id="player"><i class="icon-space-hunter"></i></div>' +
                 '   <div id="health">' +
                 '       <div class="healthbar">' +
-                '           <span class="health-digit"><span>100</span> ❤️</span>' +
+                '           <span class="health-digit"><span>100</span> <i class="icon-heart"></i></span>' +
                 '           <div class="inner-health"></div>' +
                 '       </div>' +
                 '   </div>' +
@@ -947,17 +947,17 @@ $(document).ready(function() {
             holder.css('background-image', 'url(' + weapon.imgURL + ')');
             frag.push('' +
                 '<div class="stats clearfix">' +
-                '   <span class="element">elm: <img src="img/' + state.player.weapon.el + '.png"></span>' +
+                '   <span class="element"><img src="img/' + state.player.weapon.el + '.png"></span>' +
                 '   <span class="dmg">dmg: ' + state.player.weapon.dmg + '</span>' +
                 '   <span class="crit">crit: ' + state.player.weapon.crit + '</span>' +
                 '   <span class="crit_p">crit %: ' + state.player.weapon.crit_p + '</span>' +
-                '   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
+                //'   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
                 '   <div class="equipped  clearfix">' +
-                '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
+                '       <span class="element"><img src="img/' + weapon.el + '.png"></span>' +
                 '       <span class="dmg">dmg: ' + weapon.dmg + '</span>' +
                 '       <span class="crit">crit: ' + weapon.crit + '</span>' +
                 '       <span class="crit_p">crit %: ' + weapon.crit_p + '</span>' +
-                '       <span class="special">sp: ' + weapon.special + '</span>' +
+                //'       <span class="special">sp: ' + weapon.special + '</span>' +
                 '   </div>' +
                 '</div>' +
                 '<div class="actions clearfix">' +
@@ -1000,16 +1000,16 @@ $(document).ready(function() {
                 //'   <span class="crit_p">crit %: ' + state.player.weapon.crit_p + '</span>' +
                 //'   <span class="special">sp: ' + state.player.weapon.special + '</span>' +
                 '   <div class="equipped  clearfix">' +
-                '       <span class="element">elm: <img src="img/' + weapon.el + '.png"></span>' +
+                '       <span class="element"><img src="img/' + weapon.el + '.png"></span>' +
                 '       <span class="dmg">dmg: <span>' + weapon.dmg + '</span></span>' +
                 '       <span class="crit">crit: <span>' + weapon.crit + '</span></span>' +
                 '       <span class="crit_p">crit %: ' + weapon.crit_p + '</span>' +
-                '       <span class="special">sp: <span>' + weapon.special + '</span></span>' +
+                //'       <span class="special">sp: <span>' + weapon.special + '</span></span>' +
                 '   </div>' +
                 '</div>' +
                 '<div class="actions clearfix">' +
-                '   <button class="upgrade-damage" data-item-id="'+ weapon.id +'">+ DMG (<i class="icon-weapon-parts"></i>10)</button>' +
-                '   <button class="upgrade-crit" data-item-id="'+ weapon.id +'">+ CRIT (<i class="icon-weapon-parts"></i>10)</button>' +
+                '   <button class="upgrade-damage" data-item-id="'+ weapon.id +'">+1 DMG (<i class="icon-weapon-parts"></i>10)</button>' +
+                '   <button class="upgrade-crit" data-item-id="'+ weapon.id +'">+1 CRIT (<i class="icon-weapon-parts"></i>10)</button>' +
                 '</div>' +
                 '</div>');
             holder.append(frag.join(''));
@@ -1090,7 +1090,7 @@ $(document).ready(function() {
                     '<div class="shop-item">' +
                     '   <span class="price">$' + state.shop.potions[i].price + '</span>' +
                     '   <div class="item" data-item="' + state.shop.potions[i].name + '" data-size="' + state.shop.potions[i].size + '">' +
-                    '       <i class="icon-potion"></i>' +
+                    '       <i class="icon-potion-bubbles"></i>' +
                     '   </div>' +
                     //'   <span class="amount">+'+ potionVal +'</span>' +
                     '   <button class="purchase" data-item-id="' + i + '" data-type="potion">Buy</button>' +
@@ -1124,7 +1124,7 @@ $(document).ready(function() {
                     '       <span class="dmg">' + state.shop.weapons[i].dmg + '</span>' +
                     '       <span class="crit">' + state.shop.weapons[i].crit + '</span>' +
                     '       <span class="crit_p">' + state.shop.weapons[i].crit_p + '</span>' +
-                    '       <span class="special">' + state.shop.weapons[i].special + '</span>' +
+                    //'       <span class="special">' + state.shop.weapons[i].special + '</span>' +
                     '   </div>' +
                     '   <button class="purchase" data-item-id="' + i + '" data-type="weapon">Buy</button>' +
                     '</div>');
