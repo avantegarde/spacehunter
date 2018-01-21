@@ -568,12 +568,13 @@ button:active {
     height: 30px;
     float: left;
     padding: 7px 12px 0 30px;
+    font-family: 'alien';
     font-size: 16px;
-    line-height: 20px;
+    line-height: 24px;
     text-transform: capitalize;
     overflow: hidden;
     position: relative;
-    color: #ffffff;
+    color: orange;
     z-index: 99;
 }
 .monster .monster-details {
