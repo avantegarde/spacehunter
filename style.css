@@ -258,12 +258,14 @@ button:active {
 }
 @media screen and (max-width: 400px) {
     #header .toggle-inventory i,
-    #header .toggle-fullscreen i,
-    #header .toggle-shop i {
+    #header .toggle-fullscreen i {
         font-size: 24px;
     }
     #header .toggle-shop {
-        left: 55px;
+        left: 52px;
+    }
+    #header .toggle-shop i {
+        font-size: 22px;
     }
     #header .toggle-fullscreen {
         right: 50px;
@@ -401,6 +403,9 @@ button:active {
     font-size: 12px;
     line-height: 20px;
     z-index: 999;
+}
+.healthbar .health-digit i {
+    vertical-align: middle;
 }
 #character #weapon,
 #character #potion {
@@ -832,18 +837,25 @@ button:active {
 #inventory #item-viewer .stats > span,
 #inventory #item-viewer .stats .equipped > span {
     display: block;
-    width: 20%;
+    width: calc((100% / 3) - 10px);
     float: left;
     margin: 0;
     padding: 0 2px;
     overflow: hidden;
+    line-height: 20px;
     text-align: center;
+}
+.item-viewer .stats > span.element,
+.item-viewer .stats .equipped > span.element,
+#inventory #item-viewer .stats > span.element,
+#inventory #item-viewer .stats .equipped > span.element {
+    width: 30px;
 }
 .item-viewer .stats > span.element img,
 .item-viewer .stats .equipped > span.element img,
 #inventory #item-viewer .stats > span.element img,
 #inventory #item-viewer .stats .equipped > span.element img{
-    vertical-align: middle;
+    vertical-align: top;
 }
 .item-viewer .actions,
 #inventory #item-viewer .actions {
@@ -1178,7 +1190,7 @@ button:active {
 .shop-item .stats .crit {
     color: red;
 }
-.shop-item .stats .special {
+.shop-item .stats .crit_p {
     color: gold;
 }
 #shop .noitems {

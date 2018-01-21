@@ -47,9 +47,6 @@
 .icon-backpack:before {
   content: "\63";
 }
-.icon-bag:before {
-  content: "\64";
-}
 .icon-potion:before {
   content: "\65";
 }
@@ -67,4 +64,10 @@
 }
 .icon-weapon-parts:before {
   content: "\6a";
+}
+.icon-shop:before {
+  content: "\6b";
+}
+.icon-heart:before {
+  content: "\64";
 }
