@@ -733,6 +733,9 @@ button:active {
     margin: 100px auto 0 auto;
     transform: scale(1.75);
 }
+.monster.boss .monster-name {
+    color: red;
+}
 @media screen and (max-width: 600px) {
     .monster.boss {
         transform: scale(1.5);
