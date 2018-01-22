@@ -98,10 +98,13 @@ $(document).ready(function() {
      */
     function randomMonsterName() {
         var adjectives = ["little", "sea", "huge", "strange", "double", "prehistoric", "human", "marine", "hideous", "fabulous", "mythical", "terrible", "horrible", "moral", "headed", "eyed", "grotesque", "evil", "inhuman", "hopeful", "ugly", "winged", "fantastic", "giant", "mechanical", "imaginary", "like", "female", "savage", "frightful", "big", "mythological", "gigantic", "cruel", "antediluvian", "extinct", "ferocious", "eating", "green", "horrid", "supernatural", "fierce", "hairy", "maligned", "dangerous", "famous", "unnatural", "scary", "uncouth", "shapeless", "dreadful", "fearful", "headless", "cold", "baggy", "alien", "mighty", "bloodthirsty", "aquatic", "fearsome", "legendary", "unknown", "primeval", "sacred", "scaly", "hungry", "enormous", "loose", "unwieldy", "grim", "voracious", "fabled", "weird", "hybrid", "dead"];
-        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "stick figures", "mermaid eggs", "sea barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "ice cream", "ukulele", "kazoo", "banjo", "opera singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "balloon", "mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "miller", "molder", "panel beater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
+        var nouns = ["ninja", "raven", "demon", "statue", "unicorn", "rainbows", "laser", "bunny", "captain", "nibblets", "cupcake", "carrot", "gnomes", "glitter", "potato", "salad", "toejam", "curtains", "beets", "toilet", "exorcism", "figures", "mermaideggs", "barnacles", "dragons", "jellybeans", "snakes", "dolls", "bushes", "cookies", "apples", "icecream", "ukulele", "kazoo", "banjo", "singer", "circus", "trampoline", "carousel", "carnival", "locomotive", "balloon", "mantis", "animator", "artisan", "artist", "colorist", "inker", "coppersmith", "director", "designer", "flatter", "stylist", "leadman", "limner", "model", "musician", "penciller", "producer", "scenographer", "decorator", "silversmith", "teacher", "mechanic", "beader", "clerk", "attendant", "foreman", "engineer", "miller", "molder", "panelbeater", "patternmaker", "plumber", "sawfiler", "foreman", "soaper", "wheelwright", "woodworkers"];
         var fullname = randomName(adjectives) + randomName(nouns);
         //return randomName(adjectives) + ' ' + randomName(nouns);
-        return fullname.substring(0,14);
+        if (fullname.length > 14) {
+            fullname = fullname.substring(0,14);
+        }
+        return fullname;
     }
     /**
      * Random Name Picker
@@ -391,6 +394,7 @@ $(document).ready(function() {
         var healthbar = $('#character .healthbar');
         healthbar.addClass('animated headShake');
         healthbar.find('.inner-health').addClass('animated headShake');
+        window.navigator.vibrate(200);
         setTimeout(function(){
             healthbar.removeClass('animated headShake');
             healthbar.find('.inner-health').removeClass('animated headShake');
@@ -882,7 +886,7 @@ $(document).ready(function() {
                 '<div class="monster boss" data-boss="' + boss.name + '" data-monster="' + boss.name + '" data-element="' + boss.el + '">' +
                 '   <div class="monster-img" style="background-position:-' + boss.imgX + 'px -' + boss.imgY + 'px;"></div>' +
                 '   <div class="monster-name">' +
-                '       <span class="name">Boss: ' + boss.name + '</span>' +
+                '       <span class="name">' + boss.name + '</span>' +
                 '   </div>' +
                 '   <button class="attack-monster"></button>' +
                 '   <div class="monster-details">' +
