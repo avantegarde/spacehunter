@@ -77,6 +77,19 @@ $(document).ready(function() {
         return element;
     }
     /**
+     * Random Weapon Type
+     */
+    function randomWeaponType() {
+        var w_types = [
+            'pistol',
+            'shotgun',
+            'smg',
+            'sniper'
+        ];
+        var w_type = w_types[Math.floor(Math.random() * w_types.length)];
+        return w_type;
+    }
+    /**
      * Random Rarity
      */
     function randomRarity() {
@@ -1052,9 +1065,9 @@ $(document).ready(function() {
             }*/
         ];
         var weapons = [
-            generateWeapon(state.player, false, 100),
-            generateWeapon(state.player, true, 200),
-            generateWeapon(state.player, false, 125)
+            generateWeapon(state.player, false, randomIntFromInterval(900,2500)),
+            generateWeapon(state.player, true, randomIntFromInterval(900,2500)),
+            generateWeapon(state.player, false, randomIntFromInterval(900,2500))
         ];
 
         shopInventory.potions = potions;
@@ -1201,13 +1214,14 @@ $(document).ready(function() {
             var crit_percent = randomIntFromInterval(50,99);
         }
         var weapon_el = randomElemental();
-        var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,40) +'.png';
+        var weapon_type = randomWeaponType();
+        var weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(1,40) +'.png';
         if(weapon_el === 'water'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(1,10) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(1,10) +'.png';
         } else if(weapon_el === 'fire'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(11,20) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(11,20) +'.png';
         } else if(weapon_el === 'earth'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(21,30) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(21,30) +'.png';
         }
         if(price){
             weapon_value = price;
@@ -1225,6 +1239,7 @@ $(document).ready(function() {
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,
             rare: rarity,
+            w_type: weapon_type,
             price: weapon_value
         };
         return weapon;

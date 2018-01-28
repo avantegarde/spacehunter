@@ -796,7 +796,7 @@ button:active {
     border-bottom: 1px solid #222;
     background-repeat: no-repeat;
     background-size: auto 64px;
-    background-position: center 60px;
+    background-position: center 62px;
 }
 .item-viewer[data-rare="basic"],
 #inventory #item-viewer[data-rare="basic"] {
@@ -868,22 +868,30 @@ button:active {
     position: absolute;
     bottom: 0;
     margin: 0;
-    padding: 5px 10px;
+    padding: 0px 10px;
     font-size: 14px;
     line-height: 16px;
     color: #ffffff;
+    overflow: hidden;
 }
 .item-viewer .actions button,
 #inventory #item-viewer .actions button {
     margin: 0;
+    padding: .35em 1.25em .4em 1.25em;
+    line-height: 18px;
+    border-radius: 4px 4px 0 0 !important;
+    position: relative;
 }
 .item-viewer .actions button.equip,
 #inventory #item-viewer .actions button.equip {
     float: right;
+    top: 1px;
+
 }
 #inventory #item-viewer .actions button.upgrade {
     margin-right: 15px;
     float: right;
+    top: 1px;
 }
 .item-viewer .actions button.delete,
 #inventory #item-viewer .actions button.delete {
@@ -892,6 +900,8 @@ button:active {
 .item-viewer .actions button.delete i,
 #inventory #item-viewer .actions button.delete i {
     font-size: 16px;
+    position: relative;
+    top: 3px;
 }
 #inventory .inventory-grid {
     display: block;
