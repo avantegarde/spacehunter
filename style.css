@@ -454,10 +454,15 @@ button:active {
 #character #weapon .inner[data-rare="exotic"] {
     background: #ceae32;
 }
+#character #weapon .inner {
+    padding: 18px 15px 12px 15px;
+}
 #character #weapon .inner img {
     display: inline-block;
-    width: 32px;
-    height: 32px;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 32px;
     margin: 0 auto;
     vertical-align: middle;
 }
@@ -466,8 +471,8 @@ button:active {
     position: absolute;
     width: 15px;
     height: 15px;
-    top: 5px;
-    left: 5px;
+    top: 2px;
+    left: 2px;
     margin: 0 5px 0 0;
     vertical-align: middle;
 }
@@ -796,7 +801,7 @@ button:active {
     border-bottom: 1px solid #222;
     background-repeat: no-repeat;
     background-size: auto 64px;
-    background-position: center 60px;
+    background-position: center 62px;
 }
 .item-viewer[data-rare="basic"],
 #inventory #item-viewer[data-rare="basic"] {
@@ -868,22 +873,30 @@ button:active {
     position: absolute;
     bottom: 0;
     margin: 0;
-    padding: 5px 10px;
+    padding: 0px 10px;
     font-size: 14px;
     line-height: 16px;
     color: #ffffff;
+    overflow: hidden;
 }
 .item-viewer .actions button,
 #inventory #item-viewer .actions button {
     margin: 0;
+    padding: .35em 1.25em .4em 1.25em;
+    line-height: 18px;
+    border-radius: 4px 4px 0 0 !important;
+    position: relative;
 }
 .item-viewer .actions button.equip,
 #inventory #item-viewer .actions button.equip {
     float: right;
+    top: 1px;
+
 }
 #inventory #item-viewer .actions button.upgrade {
     margin-right: 15px;
     float: right;
+    top: 1px;
 }
 .item-viewer .actions button.delete,
 #inventory #item-viewer .actions button.delete {
@@ -892,6 +905,8 @@ button:active {
 .item-viewer .actions button.delete i,
 #inventory #item-viewer .actions button.delete i {
     font-size: 16px;
+    position: relative;
+    top: 3px;
 }
 #inventory .inventory-grid {
     display: block;
@@ -952,9 +967,13 @@ button:active {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+}
+#inventory .inventory-grid .item[data-w-type="sniper"] .item-img {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }
 @media screen and (max-width: 500px) {
     #inventory #item-viewer .stats {
@@ -1139,9 +1158,13 @@ button:active {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+}
+.item-grid .item[data-w-type="sniper"] .item-img {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }
 .item-grid .item i {
     display: block;

@@ -77,6 +77,19 @@ $(document).ready(function() {
         return element;
     }
     /**
+     * Random Weapon Type
+     */
+    function randomWeaponType() {
+        var w_types = [
+            'pistol',
+            'shotgun',
+            'smg',
+            'sniper'
+        ];
+        var w_type = w_types[Math.floor(Math.random() * w_types.length)];
+        return w_type;
+    }
+    /**
      * Random Rarity
      */
     function randomRarity() {
@@ -916,7 +929,6 @@ $(document).ready(function() {
      */
     function renderInventory(inventory){
         console.log('renderInventory()');
-        // Update Healthbar
         var holder = $('#inventory');
         var frag = [];
         if(holder) {
@@ -925,8 +937,10 @@ $(document).ready(function() {
             frag.push('<div id="item-viewer" class="clearfix"></div>');
             frag.push('<div class="inventory-grid clearfix">');
             for (i=0;i < inventory.length; i++) {
+                var inventory_img = inventory[i].w_type;
+                var w_type = inventory_img ? inventory_img : '';
                 frag.push('' +
-                    '<div class="item" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '" data-rare="' + inventory[i].rare + '">' +
+                    '<div class="item" data-w-type="'+ w_type +'" data-item="' + inventory[i].name + '" data-item-id="' + inventory[i].id + '" data-rare="' + inventory[i].rare + '">' +
                     //'   <img class="elemental" src="img/' + inventory[i].el + '.png">' +
                     '   <div class="item-img" style="background-image:url(' + inventory[i].imgURL + ');"></div>' +
                     '</div>');
@@ -1052,9 +1066,9 @@ $(document).ready(function() {
             }*/
         ];
         var weapons = [
-            generateWeapon(state.player, false, 100),
-            generateWeapon(state.player, true, 200),
-            generateWeapon(state.player, false, 125)
+            generateWeapon(state.player, false, randomIntFromInterval(900,2500)),
+            generateWeapon(state.player, true, randomIntFromInterval(900,2500)),
+            generateWeapon(state.player, false, randomIntFromInterval(900,2500))
         ];
 
         shopInventory.potions = potions;
@@ -1119,10 +1133,12 @@ $(document).ready(function() {
             holder.empty();
             frag.push('<div class="item-grid weapon-grid">');
             for (i=0;i < state.shop.weapons.length; i++) {
+                var inventory_img = state.shop.weapons[i].w_type;
+                var w_type = inventory_img ? inventory_img : '';
                 frag.push('' +
                     '<div class="shop-item" data-price="' + state.shop.weapons[i].price + '">' +
                     '   <span class="price">$' + state.shop.weapons[i].price + '</span>' +
-                    '   <div class="item" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
+                    '   <div class="item" data-w-type="'+ w_type +'" data-item="' + state.shop.weapons[i].name + '" data-item-id="' + state.shop.weapons[i].id + '" data-rare="' + state.shop.weapons[i].rare + '">' +
                     '       <div class="item-img" style="background-image:url(' + state.shop.weapons[i].imgURL + ');"></div>' +
                     '   </div>' +
                     '   <div class="stats clearfix">' +
@@ -1201,13 +1217,14 @@ $(document).ready(function() {
             var crit_percent = randomIntFromInterval(50,99);
         }
         var weapon_el = randomElemental();
-        var weapon_img = 'img/pistol_'+ randomIntFromInterval(1,40) +'.png';
+        var weapon_type = randomWeaponType();
+        var weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(1,40) +'.png';
         if(weapon_el === 'water'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(1,10) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(1,10) +'.png';
         } else if(weapon_el === 'fire'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(11,20) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(11,20) +'.png';
         } else if(weapon_el === 'earth'){
-            weapon_img = 'img/pistol_'+ randomIntFromInterval(21,30) +'.png';
+            weapon_img = 'img/'+ weapon_type +'_'+ randomIntFromInterval(21,30) +'.png';
         }
         if(price){
             weapon_value = price;
@@ -1225,6 +1242,7 @@ $(document).ready(function() {
             special: weapon_dmg + weapon_crit,
             imgURL: weapon_img,
             rare: rarity,
+            w_type: weapon_type,
             price: weapon_value
         };
         return weapon;
