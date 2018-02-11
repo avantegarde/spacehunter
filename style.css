@@ -191,6 +191,36 @@ button:active {
 #notif .message.err {
     background: rgba(215, 0, 51, 0.8);
 }
+#notif .message.modal {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999999;
+    background: rgba(0,0,0,0.5);
+    padding: 75px 15px 15px 15px;
+}
+#notif .message.modal .inner {
+    display: block;
+    width: 500px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid #666666;
+    background: #000000;
+}
+#notif .message.modal h3 {
+    margin: 0 0 30px 0;
+}
+#notif .message.modal button.cancel {
+    margin: 0 15px 0 0;
+}
+#notif .message.modal button.confirm {
+    margin: 0 0 0 15px;
+}
 /*--- Header ---*/
 #header {
     display: block;
@@ -327,6 +357,16 @@ button:active {
 }
 #settings ul.menu #game-reset {
     color: darkred;
+}
+#settings .credits {
+    display: block;
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+    font-size: 12px;
+    line-height: 12px;
+    text-align: center;
+    color: #666666;
 }
 /*--- Battleground ---*/
 #battleground {

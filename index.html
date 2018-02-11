@@ -34,6 +34,7 @@
             <li><span class="toggle-fullscreen"><i class="icon-arrow-expand"></i> Fullscreen</span></li>
             <li><span id="game-reset"><i class="icon-trash-a"></i> Delete Character</span></li>
         </ul>
+        <span class="credits">Made with ❤ by Kael Steinert</span>
     </div>
     <!-- Inventory -->
     <div id="inventory" class="clearfix"></div>
@@ -276,6 +277,20 @@ $(document).ready(function() {
             var holder = $('#notif');
             var notification = '<div class="message err">'+ message +'</div>';
             displayNotification(notification);
+        },
+        modal: function(message, itemID){
+            var holder = $('#notif');
+            holder.empty();
+            var notification = '' +
+                '<div class="message modal">' +
+                '   <div class="inner">' +
+                '       '+ message +
+                '       <button class="cancel close-modal" data-button="red">Cancel</button>' +
+                '       <button class="confirm" data-item-id="'+ itemID +'">Confirm</button>' +
+                '   </div>' +
+                '</div>';
+            var modalID = generateUUID();
+            displayModal(notification, modalID);
         }
     };
     function displayNotification(message) {
@@ -290,6 +305,20 @@ $(document).ready(function() {
                 holder.empty();
             }, 100);
         }, 3000);
+    }
+    function displayModal(message, uuid) {
+        var holder = $('#notif');
+        holder.append(message);
+        holder.data('uuid', uuid);
+        holder.css('height','auto');
+        holder.addClass('active');
+    }
+    function hideModal(uuid) {
+        var holder = $('#notif');
+        if (holder.data('uuid') == uuid) {
+            holder.removeClass('active');
+            holder.empty();
+        }
     }
     /**
      * Coin Toss
@@ -664,11 +693,11 @@ $(document).ready(function() {
                     notif.err('You cannot delete an equipped weapon.');
                 } else {
                     inventory.splice(itemIndex, 1);
+                    //grant weapon parts
+                    grantWeaponParts(state.player, randomIntFromInterval(5,10));
                 }
             }
         }
-        //grant weapon parts
-        grantWeaponParts(state.player, randomIntFromInterval(5,10));
         updatePlayer(state.player);
         renderInventory(inventory);
         save(state);
@@ -1427,11 +1456,24 @@ $(document).ready(function() {
     // Delete Item from inventory
     $(document).on('click', '#item-viewer button.delete', function() {
         var weaponID = $(this).data('item-id');
-        var weapon = getWeapon(weaponID);
-        var deleteConfirm = confirm("Are you SURE you want to delete this item?");
-        if (deleteConfirm == true) {
+        //var weapon = getWeapon(weaponID);
+        var message = '<h3>Are you SURE you want to delete this item?</h3>';
+        notif.modal(message, weaponID);
+    });
+    // Confirm Notification Modal
+    $(document).on('click', '#notif button.confirm', function() {
+        var uuid = $('#notif').data('uuid');
+        var weaponID = $(this).data('item-id');
+        if (weaponID) {
+            var weapon = getWeapon(weaponID);
+            hideModal(uuid);
             deleteInventoryItem(weapon.id);
         }
+    });
+    // Close Notification Modal
+    $(document).on('click', '#notif .close-modal', function() {
+        var uuid = $('#notif').data('uuid');
+        hideModal(uuid);
     });
     // Upgrade Weapon Modal
     $(document).on('click', '#item-viewer button.upgrade', function() {
