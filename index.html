@@ -310,7 +310,7 @@ $(document).ready(function() {
         var holder = $('#notif');
         holder.append(message);
         holder.data('uuid', uuid);
-        holder.css('height','auto');
+        //holder.css('height','auto');
         holder.addClass('active');
     }
     function hideModal(uuid) {
@@ -436,7 +436,9 @@ $(document).ready(function() {
         var healthbar = $('#character .healthbar');
         healthbar.addClass('animated headShake');
         healthbar.find('.inner-health').addClass('animated headShake');
-        window.navigator.vibrate(200);
+        if (window.navigator.vibrate) {
+            window.navigator.vibrate(200);
+        }
         setTimeout(function(){
             healthbar.removeClass('animated headShake');
             healthbar.find('.inner-health').removeClass('animated headShake');
@@ -857,9 +859,9 @@ $(document).ready(function() {
                         '   <div class="monster-details">' +
                         '       <div class="stats clearfix">' +
                         '           <span class="level">' + monsters[i].lvl + '</span>' +
-                        '           <span class="elemental" style="background-image:url(img/' + monsters[i].el + '.png);"><span>' + monsters[i].el + '</span>️</span>' +
-                        '           <span class="dmg"><span>' + monsters[i].dmg + '</span>️</span>' +
-                        //'           <span class="shield">shield: <span>' + monsters[i].shield + '</span>️</span>' +
+                        '           <span class="elemental" style="background-image:url(img/' + monsters[i].el + '.png);"><span>' + monsters[i].el + '</span></span>' +
+                        '           <span class="dmg"><span>' + monsters[i].dmg + '</span></span>' +
+                        //'           <span class="shield">shield: <span>' + monsters[i].shield + '</span></span>' +
                         '       </div>' +
                         '   </div>' +
                         '   <div class="shield">' +
@@ -867,7 +869,7 @@ $(document).ready(function() {
                         '       <div class="inner-shield" style="width:' + monsters[i].shield + '%"></div>' +
                         '   </div>' +
                         '   <div class="healthbar">' +
-                        '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span>️</span>' +
+                        '       <span class="health-digit"><span>' + monsters[i].maxHealth + '</span></span>' +
                         '       <div class="inner-health"></div>' +
                         '   </div>' +
                         '</div>');
@@ -934,9 +936,9 @@ $(document).ready(function() {
                 '   <div class="monster-details">' +
                 '       <div class="stats clearfix">' +
                 '           <span class="level">' + boss.lvl + '</span>' +
-                '           <span class="elemental" style="background-image:url(img/' + boss.el + '.png);"><span>' + boss.el + '</span>️</span>' +
-                '           <span class="dmg"><span>' + boss.dmg + '</span>️</span>' +
-                //'           <span class="shield">shield: <span>' + boss.shield + '</span>️</span>' +
+                '           <span class="elemental" style="background-image:url(img/' + boss.el + '.png);"><span>' + boss.el + '</span></span>' +
+                '           <span class="dmg"><span>' + boss.dmg + '</span></span>' +
+                //'           <span class="shield">shield: <span>' + boss.shield + '</span></span>' +
                 '       </div>' +
                 '   </div>' +
                 '   <div class="shield">' +
@@ -944,7 +946,7 @@ $(document).ready(function() {
                 '       <div class="inner-shield" style="width:' + boss.shield + '%"></div>' +
                 '   </div>' +
                 '   <div class="healthbar">' +
-                '       <span class="health-digit"><span>' + boss.maxHealth + '</span>️</span>' +
+                '       <span class="health-digit"><span>' + boss.maxHealth + '</span></span>' +
                 '       <div class="inner-health"></div>' +
                 '   </div>' +
                 '</div>');

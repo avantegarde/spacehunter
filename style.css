@@ -173,7 +173,7 @@ button:active {
     z-index: 99999999;
 }
 #notif.active {
-    height: auto;
+    height: 100%;
 }
 #notif .message {
     display: block;
