@@ -310,13 +310,14 @@ $(document).ready(function() {
         var holder = $('#notif');
         holder.append(message);
         holder.data('uuid', uuid);
-        //holder.css('height','auto');
+        holder.css('height','100%');
         holder.addClass('active');
     }
     function hideModal(uuid) {
         var holder = $('#notif');
         if (holder.data('uuid') == uuid) {
             holder.removeClass('active');
+            holder.css('height','0');
             holder.empty();
         }
     }
