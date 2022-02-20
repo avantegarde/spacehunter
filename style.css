@@ -19,6 +19,7 @@ html {
     -webkit-text-size-adjust: 100%;
     background-color:#222222;
     height: 100%;
+    touch-action: none;
 }
 body {
     margin: 0;
@@ -32,6 +33,7 @@ body {
     background-color:#222222;
     color: #777777;
     height: 100%;
+    touch-action: none;
 }
 /*---------------------*
  *------ Buttons ------*
@@ -152,7 +154,7 @@ button:active {
 }
 @media screen and (min-width: 642px) {
     #game {
-        width: 642px;
+        width: 660px;
     }
 }
 /*--- Notifications ---*/
