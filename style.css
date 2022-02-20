@@ -14,13 +14,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    touch-action: none;
 }
 html {
     -webkit-text-size-adjust: 100%;
     background-color:#222222;
     height: 100%;
-    touch-action: none;
 }
 body {
     margin: 0;
@@ -34,7 +32,6 @@ body {
     background-color:#222222;
     color: #777777;
     height: 100%;
-    touch-action: none;
 }
 /*---------------------*
  *------ Buttons ------*
@@ -86,7 +83,6 @@ button:visited {
     transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
-    touch-action: none;
 }
 [data-button]:hover,
 [data-button]:focus,
@@ -459,7 +455,6 @@ button:active {
     margin: 0;
     padding: 0 15px;
     float: left;
-    touch-action: none;
 }
 #character #weapon .inner,
 #character #potion .inner {
