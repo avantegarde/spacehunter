@@ -86,6 +86,7 @@ button:visited {
     transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
+    touch-action: none;
 }
 [data-button]:hover,
 [data-button]:focus,
@@ -458,6 +459,7 @@ button:active {
     margin: 0;
     padding: 0 15px;
     float: left;
+    touch-action: none;
 }
 #character #weapon .inner,
 #character #potion .inner {
